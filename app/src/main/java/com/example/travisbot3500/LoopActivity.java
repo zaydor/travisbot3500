@@ -6,7 +6,9 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -18,9 +20,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.*;
 
@@ -41,6 +45,10 @@ public class LoopActivity extends AppCompatActivity {
     private ScheduledFuture<?> beeperHandle2;
     private ScheduledFuture<?> beeperHandle3;
 
+    TextView timerText;
+    CountDownTimer countDownTimer;
+
+
     // TODO: add a timer on this layout page when the next check will be
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +59,43 @@ public class LoopActivity extends AppCompatActivity {
 
         createNotificationChannel();
 
+        timerText = binding.timerText;
+
         doc = MainActivity.doc;
         timeInterval = MainActivity.timeInterval;
         URL = MainActivity.URL;
         ID = MainActivity.ID;
+
+        System.out.println("Loop built");
+        System.out.println(timeInterval);
+
+        long duration = timeInterval * 60000;
+        System.out.println(duration);
+
+        countDownTimer = new CountDownTimer(duration, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long secRemain = millisUntilFinished / 1000;
+                long minutesRemain = secRemain / 60;
+                secRemain = (millisUntilFinished / 1000) % 60;
+
+                String min = String.format(Locale.ENGLISH, "%02d", minutesRemain);
+                String sec = String.format(Locale.ENGLISH, "%02d", secRemain);
+
+
+                String timeRemain = min + ":" + sec;
+                timerText.setText(timeRemain);
+            }
+
+
+            @Override
+            public void onFinish() {
+                // when finish, restart timer
+                this.start();
+            }
+
+        };
+
 
         String response = "TravisBot3500 will check '" + URL + "' for changes on the element with ID '" + ID + "' every " + timeInterval + " minutes!";
         binding.ActivityText.setText(response);
@@ -65,7 +106,10 @@ public class LoopActivity extends AppCompatActivity {
     }
 
     public void travisbot3500(int timeInterval) {
-        final Runnable beeper = this::newURLCheck;
+        final Runnable beeper = () -> {
+                newURLCheck();
+                countDownTimer.start();
+        };
         final Runnable beeper2 = this::newSiteElementCheck;
         final Runnable beeper3 = this::compareNewSiteElement;
         beeperHandle =
@@ -155,6 +199,7 @@ public class LoopActivity extends AppCompatActivity {
         beeperHandle.cancel(true);
         beeperHandle2.cancel(true);
         beeperHandle3.cancel(true);
+        countDownTimer.cancel();
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
