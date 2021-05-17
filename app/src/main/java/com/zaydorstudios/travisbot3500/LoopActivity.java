@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -46,6 +47,7 @@ public class LoopActivity extends AppCompatActivity {
 
     TextView timerText;
     CountDownTimer countDownTimer;
+    TextView sessionEndText;
 
 
     // TODO: add a timer on this layout page when the next check will be
@@ -58,6 +60,10 @@ public class LoopActivity extends AppCompatActivity {
 
         createNotificationChannel();
 
+        AlertDialog dialog = buildAlertDialog();
+
+        sessionEndText = binding.travisBotEndText;
+
         timerText = binding.timerText;
 
         doc = MainActivity.doc;
@@ -69,26 +75,47 @@ public class LoopActivity extends AppCompatActivity {
         System.out.println(timeInterval);
 
         long duration = timeInterval * 60000;
-        System.out.println(duration);
+        final long[] maxDuration = {24 * 60 * 60000};
 
         countDownTimer = new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                long secRemain = millisUntilFinished / 1000;
-                long minutesRemain = secRemain / 60;
-                secRemain = (millisUntilFinished / 1000) % 60;
+                long secondsRemain = (millisUntilFinished / 1000) % 60 ;
+                long minutesRemain = ((millisUntilFinished / (1000*60)) % 60);
+
+                if (maxDuration[0] > 0) {
+                    maxDuration[0] -= 1000;
+                }
+
+                long maxSecondsRemain = (maxDuration[0] / 1000) % 60 ;
+                long maxMinutesRemain = ((maxDuration[0] / (1000*60)) % 60);
+                long maxHoursRemain   = ((maxDuration[0] / (1000*60*60)) % 24);
 
                 String min = String.format(Locale.ENGLISH, "%02d", minutesRemain);
-                String sec = String.format(Locale.ENGLISH, "%02d", secRemain);
+                String sec = String.format(Locale.ENGLISH, "%02d", secondsRemain);
+
+                String maxHour = String.format(Locale.ENGLISH, "%02d", maxHoursRemain);
+                String maxMin = String.format(Locale.ENGLISH, "%02d", maxMinutesRemain);
+                String maxSec = String.format(Locale.ENGLISH, "%02d", maxSecondsRemain);
 
 
                 String timeRemain = min + ":" + sec;
+
+                String fullText = "This TravisBot3500 session will end in: " + maxHour + ":" + maxMin + ":" + maxSec;
+
+                sessionEndText.setText(fullText);
                 timerText.setText(timeRemain);
             }
 
 
             @Override
             public void onFinish() {
+                if (maxDuration[0] < 1000) {
+                    // send notification and go back to main
+                    sendNotification("La Flame Says...", "You need to restart your TravisBot3500 session!");
+                    goBackToMain();
+                }
+
                 // when finish, restart timer
                 this.start();
             }
@@ -99,9 +126,10 @@ public class LoopActivity extends AppCompatActivity {
         String response = "TravisBot3500 will check '" + URL + "' for changes on the element with ID '" + ID + "' every " + timeInterval + " minutes!";
         binding.ActivityText.setText(response);
 
-        binding.BackButton.setOnClickListener(v -> goBackToMain());
+        binding.BackButton.setOnClickListener(v -> dialog.show());
 
         travisbot3500(timeInterval);
+
     }
 
     public void travisbot3500(int timeInterval) {
@@ -119,6 +147,19 @@ public class LoopActivity extends AppCompatActivity {
                 scheduler.scheduleAtFixedRate(beeper3, 2, timeInterval * 60, SECONDS);
 
         scheduler.schedule(() -> { beeperHandle.cancel(true); beeperHandle2.cancel(true);  beeperHandle3.cancel(true);}, 60 * 60 * 24, SECONDS);
+    }
+
+    private AlertDialog buildAlertDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoopActivity.this);
+
+        builder.setPositiveButton("Confirm", (dialog, id) -> goBackToMain());
+
+        builder.setNegativeButton("Nevermind", (dialog, id) -> dialog.dismiss());
+
+        builder.setMessage("This will end the current TravisBot3500 session.")
+                .setTitle("Are you sure?");
+
+        return builder.create();
     }
 
     public void compareNewSiteElement(){

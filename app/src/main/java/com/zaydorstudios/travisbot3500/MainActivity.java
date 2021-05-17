@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 canSubmit.setValue(false);
                 if (!validTime.getValue() && !isInitialTime) {
-                    TimeText.setError("Pleaser enter a value greater than 0");
+                    TimeText.setError("Pleaser enter a value greater than 0 and less than or equal to 60");
                 }
             }
         });
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                 isInitialTime = false;
                 if (s.length() > 0) {
                     int valueOfS = Integer.parseInt(Objects.requireNonNull(s.toString()));
-                    if (valueOfS > 0) {
+                    if (valueOfS > 0 && valueOfS <= 60) {
                         validTime.setValue(true);
                     } else {
                         validTime.setValue(false);
