@@ -29,6 +29,8 @@ import org.jsoup.select.Elements;
 
 public class MainActivity extends AppCompatActivity {
 
+    // TODO: Add comments
+
     public ActivityMainBinding binding;
     public static Document doc;
     public static Elements siteElement;
@@ -270,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
         binding.IDInput.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 if (binding.IDInput.getText().toString().isEmpty()) {
-                    // TODO: throw an error in the text box instead
                     Toast.makeText(getApplicationContext(),"Please enter an ID",Toast.LENGTH_SHORT).show();
                 } else {
                     ID = Objects.requireNonNull(binding.IDInput.getText()).toString();
