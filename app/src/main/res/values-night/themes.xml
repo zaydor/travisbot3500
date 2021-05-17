@@ -2,13 +2,13 @@
     <!-- Base application theme. -->
     <style name="Theme.TravisBot3500" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimary">#e84a5f</item>
+        <item name="colorPrimaryVariant">#e84a5f</item>
+        <item name="colorOnPrimary">#fecea8</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">#fecea8</item>
+        <item name="colorSecondaryVariant">#fecea8</item>
+        <item name="colorOnSecondary">#2a363b</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

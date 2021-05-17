@@ -1,9 +1,13 @@
 package com.example.travisbot3500;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
@@ -92,6 +96,34 @@ public class MainActivity extends AppCompatActivity {
         validURL.setValue(false);
         validID.setValue(false);
         validTime.setValue(false);
+
+        ActionBar actionBar;
+        actionBar = getSupportActionBar();
+
+        // Define ColorDrawable object and parse color
+        // using parseColor method
+        // with color hash code as its parameter
+
+        ColorDrawable colorDrawable;
+        int nightModeFlags =
+                getApplicationContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                // Night mode is not active, we're using the light theme
+                colorDrawable = new ColorDrawable(Color.parseColor("#08d9d6"));
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Night mode is active, we're using dark theme
+                colorDrawable = new ColorDrawable(Color.parseColor("#e84a5f"));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + nightModeFlags);
+        }
+
+        // Set BackgroundDrawable
+        assert actionBar != null;
+        actionBar.setBackgroundDrawable(colorDrawable);
 
         // TODO: have observers to let user know they are waiting for response from JSOUP
         canSubmit.observe(this, changedValue -> {
