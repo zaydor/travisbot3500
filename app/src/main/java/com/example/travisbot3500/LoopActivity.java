@@ -113,11 +113,11 @@ public class LoopActivity extends AppCompatActivity {
         final Runnable beeper2 = this::newSiteElementCheck;
         final Runnable beeper3 = this::compareNewSiteElement;
         beeperHandle =
-                scheduler.scheduleAtFixedRate(beeper, 5, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper, 0, timeInterval * 60, SECONDS);
         beeperHandle2 =
-                scheduler.scheduleAtFixedRate(beeper2, 6, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper2, 1, timeInterval * 60, SECONDS);
         beeperHandle3 =
-                scheduler.scheduleAtFixedRate(beeper3, 7, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper3, 2, timeInterval * 60, SECONDS);
 
         scheduler.schedule(() -> { beeperHandle.cancel(true); beeperHandle2.cancel(true);  beeperHandle3.cancel(true);}, 60 * 60 * 24, SECONDS);
     }
