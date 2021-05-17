@@ -1,4 +1,4 @@
-package com.example.travisbot3500;
+package com.zaydorstudios.travisbot3500;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.travisbot3500.databinding.ActivityMainBinding;
+import com.zaydorstudios.travisbot3500.databinding.ActivityMainBinding;
 
 import java.util.Objects;
 

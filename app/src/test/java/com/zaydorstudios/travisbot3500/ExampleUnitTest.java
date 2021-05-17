@@ -1,4 +1,4 @@
-package com.example.travisbot3500;
+package com.zaydorstudios.travisbot3500;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.example.travisbot3500;
+package com.zaydorstudios.travisbot3500;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.example.travisbot3500.databinding.ActivityLoopBinding;
+import com.zaydorstudios.travisbot3500.databinding.ActivityLoopBinding;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.*;
 
@@ -147,7 +146,7 @@ public class LoopActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "TRAVISBOT3500 CHANNEL")
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_travisbot_round)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
