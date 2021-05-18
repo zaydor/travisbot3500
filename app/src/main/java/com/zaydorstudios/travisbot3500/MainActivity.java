@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean isInitialURL;
     public boolean isInitialID;
     public boolean isInitialTime;
+    public static boolean returningToMain = false;
 
     Thread URLThread = new Thread(() -> {
         try  {
@@ -90,14 +91,27 @@ public class MainActivity extends AppCompatActivity {
         IDText = binding.IDInput;
         TimeText = binding.TimeIntervalInput;
 
-        isInitialURL = true;
-        isInitialID = true;
-        isInitialTime = true;
+        if (!returningToMain) {
+            isInitialURL = true;
+            isInitialID = true;
+            isInitialTime = true;
 
-        canSubmit.setValue(false); // Initialize
-        validURL.setValue(false);
-        validID.setValue(false);
-        validTime.setValue(false);
+            canSubmit.setValue(false); // Initialize
+            validURL.setValue(false);
+            validID.setValue(false);
+            validTime.setValue(false);
+        } else {
+            canSubmit.setValue(true); // Initialize
+            validURL.setValue(true);
+            validID.setValue(true);
+            validTime.setValue(true);
+            URLText.setText(LoopActivity.URL);
+            IDText.setText(LoopActivity.ID);
+            String timeInt = LoopActivity.timeInterval + "";
+            TimeText.setText(timeInt);
+        }
+
+
 
         ActionBar actionBar;
         actionBar = getSupportActionBar();
@@ -185,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
         responseText = binding.ResponseText;
         checkButton = binding.CheckButton;
         submitButton = binding.SubmitButton;
-        submitButton.setEnabled(false);
         checkButton.setVisibility(View.INVISIBLE);
 
         binding.URLInput.setOnFocusChangeListener((v, hasFocus) -> {
