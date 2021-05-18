@@ -35,8 +35,8 @@ public class LoopActivity extends AppCompatActivity {
     public static Document doc;
     public static Elements OGSiteElement;
     public Elements newSiteElement;
-    public int timeInterval;
-    public String URL;
+    public static int timeInterval;
+    public static String URL;
     public static String ID;
 
     private final ScheduledExecutorService scheduler =
@@ -240,6 +240,7 @@ public class LoopActivity extends AppCompatActivity {
         beeperHandle2.cancel(true);
         beeperHandle3.cancel(true);
         countDownTimer.cancel();
+        MainActivity.returningToMain = true;
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
