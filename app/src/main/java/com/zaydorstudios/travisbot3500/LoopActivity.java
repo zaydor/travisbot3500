@@ -69,7 +69,7 @@ public class LoopActivity extends AppCompatActivity {
 
         doc = MainActivity.doc;
         timeInterval = MainActivity.timeInterval;
-        URL = MainActivity.URL;
+        URL = MainActivity.updateURL(MainActivity.URL);
         ID = MainActivity.ID;
 
         System.out.println("Loop built");
@@ -124,7 +124,12 @@ public class LoopActivity extends AppCompatActivity {
         };
 
 
-        String response = "TravisBot3500 will check '" + URL + "' for changes on the element with ID '" + ID + "' every " + timeInterval + " minutes!";
+        String response = "TravisBot3500 will check '" + URL + "' for changes on the element with ID '" + ID + "' every " + timeInterval + " minute";
+        if (timeInterval > 1) {
+            response += "s!";
+        } else {
+            response += "!";
+        }
         binding.ActivityText.setText(response);
 
         binding.BackButton.setOnClickListener(v -> dialog.show());
@@ -141,11 +146,11 @@ public class LoopActivity extends AppCompatActivity {
         final Runnable beeper2 = this::newSiteElementCheck;
         final Runnable beeper3 = this::compareNewSiteElement;
         beeperHandle =
-                scheduler.scheduleAtFixedRate(beeper, 5, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper, 0, timeInterval * 60, SECONDS);
         beeperHandle2 =
-                scheduler.scheduleAtFixedRate(beeper2, 6, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper2, 1, timeInterval * 60, SECONDS);
         beeperHandle3 =
-                scheduler.scheduleAtFixedRate(beeper3, 7, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper3, 2, timeInterval * 60, SECONDS);
 
         scheduler.schedule(() -> { beeperHandle.cancel(true); beeperHandle2.cancel(true);  beeperHandle3.cancel(true);}, 60 * 60 * 24, SECONDS);
     }
