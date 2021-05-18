@@ -59,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     Thread URLThread = new Thread(() -> {
         try  {
             System.out.println("URL: " + URL);
-            URLCheck(URL);
+            String updatedURL = updateURL(URL);
+            URLCheck(updatedURL);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
 
             if (!hasFocus) {
                 if (binding.URLInput.getText().toString().isEmpty()) {
-                    // TODO: throw an error in the text box instead
                     Toast.makeText(getApplicationContext(),"Please enter a URL",Toast.LENGTH_SHORT).show();
                 } else {
                     URL = Objects.requireNonNull(binding.URLInput.getText()).toString();
@@ -316,6 +316,14 @@ public class MainActivity extends AppCompatActivity {
     public void setAlert(){
         Intent intent = new Intent(this, LoopActivity.class);
         startActivity(intent);
+    }
+
+    public static String updateURL(String url) {
+        if (url.startsWith("https://")) {
+            return url;
+        } else {
+            return "https://" + url;
+        }
     }
 
     private void URLCheck(String url) {
