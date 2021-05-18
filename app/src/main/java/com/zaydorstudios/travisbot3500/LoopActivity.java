@@ -4,6 +4,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -112,7 +113,7 @@ public class LoopActivity extends AppCompatActivity {
             public void onFinish() {
                 if (maxDuration[0] < 1000) {
                     // send notification and go back to main
-                    sendNotification("La Flame Says...", "You need to restart your TravisBot3500 session!");
+                    sendNotification("La Flame Says...", "You need to restart your TravisBot3500 session!", false);
                     goBackToMain();
                 }
 
@@ -140,11 +141,11 @@ public class LoopActivity extends AppCompatActivity {
         final Runnable beeper2 = this::newSiteElementCheck;
         final Runnable beeper3 = this::compareNewSiteElement;
         beeperHandle =
-                scheduler.scheduleAtFixedRate(beeper, 0, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper, 5, timeInterval * 60, SECONDS);
         beeperHandle2 =
-                scheduler.scheduleAtFixedRate(beeper2, 1, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper2, 6, timeInterval * 60, SECONDS);
         beeperHandle3 =
-                scheduler.scheduleAtFixedRate(beeper3, 2, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper3, 7, timeInterval * 60, SECONDS);
 
         scheduler.schedule(() -> { beeperHandle.cancel(true); beeperHandle2.cancel(true);  beeperHandle3.cancel(true);}, 60 * 60 * 24, SECONDS);
     }
@@ -171,29 +172,35 @@ public class LoopActivity extends AppCompatActivity {
                 System.out.println("Same site elements");
             } else {
                 System.out.println("Different site elements");
-                sendNotification("IT'S LIT!", "Something changed at " + URL);
+                sendNotification("IT'S LIT!", "Something changed at " + URL, true);
             }
         } catch (Exception e) {
             System.out.println(e);
-            sendNotification("ERROR", "Oops, something went wrong :(");
+            sendNotification("ERROR", "Oops, something went wrong :(", false);
         }
     }
 
 
-    public void sendNotification(String title, String text){
+    public void sendNotification(String title, String text, boolean changeDetected){
         // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(this, MemoBroadcast.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "TRAVISBOT3500 CHANNEL")
-                .setSmallIcon(R.mipmap.ic_travisbot_round)
+                .setSmallIcon(R.mipmap.ic_travisbot)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
+
+        if (changeDetected) {
+            Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URL));
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            builder.addAction(R.drawable.ic_timer, "Go to Website", contentIntent);
+        }
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
