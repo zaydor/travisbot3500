@@ -2,8 +2,10 @@ package com.zaydorstudios.travisbot3500;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.MutableLiveData;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -15,13 +17,26 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zaydorstudios.travisbot3500.databinding.ActivityMainBinding;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -30,6 +45,7 @@ import org.jsoup.select.Elements;
 public class MainActivity extends AppCompatActivity {
 
     // TODO: Add comments
+    // TODO: Split code into functions
 
     public ActivityMainBinding binding;
     public static Document doc;
@@ -47,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public EditText URLText;
     public EditText IDText;
     public EditText TimeText;
+    public ImageButton HistoryButton;
 
     public boolean isValidURL;
     public boolean isValidID;
@@ -55,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean isInitialID;
     public boolean isInitialTime;
     public static boolean returningToMain = false;
+
+    public static boolean historyFileCreated = false;
 
     Thread URLThread = new Thread(() -> {
         try  {
@@ -91,6 +110,20 @@ public class MainActivity extends AppCompatActivity {
         URLText = binding.URLInput;
         IDText = binding.IDInput;
         TimeText = binding.TimeIntervalInput;
+        HistoryButton = binding.HistoryButton;
+        
+        try {
+            getHistoryFileContents();
+            historyFileCreated = true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (historyFileCreated) {
+            HistoryButton.setVisibility(View.VISIBLE);
+        } else {
+            HistoryButton.setVisibility(View.INVISIBLE);
+        }
 
         if (!returningToMain) {
             isInitialURL = true;
@@ -111,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
             String timeInt = LoopActivity.timeInterval + "";
             TimeText.setText(timeInt);
         }
-
-
 
         ActionBar actionBar;
         actionBar = getSupportActionBar();
@@ -196,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         responseText = binding.ResponseText;
         checkButton = binding.CheckButton;
         submitButton = binding.SubmitButton;
@@ -220,13 +250,10 @@ public class MainActivity extends AppCompatActivity {
 
         binding.TimeIntervalInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -299,7 +326,11 @@ public class MainActivity extends AppCompatActivity {
 
         binding.SubmitButton.setOnClickListener(v -> {
             LoopActivity.OGSiteElement = siteElement;
-            System.out.println("Submit button pressed!");
+            try {
+                setDataInHistoryFile(updateURL(URL), ID);
+            } catch (JSONException | FileNotFoundException e) {
+                e.printStackTrace();
+            }
             setAlert();
         });
 
@@ -311,7 +342,61 @@ public class MainActivity extends AppCompatActivity {
                 siteElementThread.run();
             }
         });
+
+        HistoryButton.setOnClickListener(v -> {
+            PopupMenu menu = new PopupMenu(MainActivity.this, v);
+            try {
+                JSONArray contents = new JSONArray(getHistoryFileContents());
+                for (int i = 0; i < contents.length(); i++) {
+                    JSONObject obj = (JSONObject) contents.get(i);
+                    menu.getMenu().add(0, i, i, "URL: " + obj.opt("URL") + "  |   ID: " + obj.opt("ID"));
+                }
+                menu.getMenu().add(0, contents.length(), contents.length(), "CLEAR HISTORY");
+                menu.show();
+
+                menu.setOnMenuItemClickListener(item -> {
+                    int i = item.getItemId();
+                    System.out.println("item id: " + i);
+
+                    if (i == contents.length()) {
+                        deleteHistoryFile();
+                        return true;
+                    }
+                    try {
+                        JSONObject chosenObj = (JSONObject) contents.get(i);
+                        validURL.setValue(true);
+                        validID.setValue(true);
+                        URLText.setText(Objects.requireNonNull(chosenObj.opt("URL")).toString());
+                        IDText.setText(Objects.requireNonNull(chosenObj.opt("ID")).toString());
+
+                        URL = Objects.requireNonNull(binding.URLInput.getText()).toString();
+                        if (URLThread.getState() == Thread.State.NEW) {
+                            URLThread.start();
+                        } else {
+                            URLThread.run();
+                        }
+
+                        ID = Objects.requireNonNull(binding.IDInput.getText()).toString();
+                        if (siteElementThread.getState() == Thread.State.NEW) {
+                            siteElementThread.start();
+                        } else {
+                            siteElementThread.run();
+                        }
+
+
+                        return true;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return false;
+                });
+                System.out.println(contents);
+            } catch (FileNotFoundException | JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
+
 
     public void setAlert(){
         Intent intent = new Intent(this, LoopActivity.class);
@@ -368,6 +453,78 @@ public class MainActivity extends AppCompatActivity {
             validID.postValue(true);
         } else {
             validID.postValue(false);
+        }
+    }
+
+    private void setDataInHistoryFile(String url, String id) throws JSONException, FileNotFoundException {
+        JSONObject addressMap = new JSONObject();
+        addressMap.put("URL", url);
+        addressMap.put("ID", id);
+        JSONArray contents;
+        if (historyFileCreated) {
+            contents = new JSONArray(getHistoryFileContents());
+        } else {
+            contents = new JSONArray();
+        }
+        HistoryButton.setVisibility(View.VISIBLE);
+
+        for (int i = 0; i < contents.length(); i++) {
+            System.out.println("contents: " + contents.get(i));
+            if (contents.get(i).toString().equals(addressMap.toString())) {
+                System.out.println("already in history");
+                historyFileCreated = true;
+                return;
+            }
+        }
+
+        contents.put(addressMap);
+
+        String filename = "TravisBot3500 History";
+        String fileContents = contents.toString();
+
+        try (FileOutputStream fos = getApplicationContext().openFileOutput(filename, Context.MODE_PRIVATE)) {
+            fos.write(fileContents.getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        historyFileCreated = true;
+    }
+
+    private String getHistoryFileContents() throws FileNotFoundException {
+        String fileContents;
+        FileInputStream fis = getApplicationContext().openFileInput("TravisBot3500 History");
+        InputStreamReader inputStreamReader =
+                new InputStreamReader(fis, StandardCharsets.UTF_8);
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+            String line = reader.readLine();
+            while (line != null) {
+                stringBuilder.append(line).append('\n');
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            // Error occurred when opening raw file for reading.
+            System.out.println("Error when opening raw file for reading");
+        } finally {
+            fileContents = stringBuilder.toString();
+        }
+        return fileContents;
+
+    }
+
+    private void deleteHistoryFile() {
+        URI uri = getApplication().getFilesDir().toURI();
+        File fdelete = new File(uri.getPath().concat("TravisBot3500 History"));
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                System.out.println("file Deleted :" + uri.getPath().concat("TravisBot3500 History"));
+                HistoryButton.setVisibility(View.INVISIBLE);
+                historyFileCreated = false;
+            } else {
+                System.out.println("file not Deleted :" + uri.getPath().concat("TravisBot3500 History"));
+            }
         }
     }
 }
