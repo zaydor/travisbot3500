@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Stack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: Add comments
     // TODO: Split code into functions
+    // TODO: Clean up form validation
 
     public ActivityMainBinding binding;
     public static Document doc;
@@ -57,13 +60,21 @@ public class MainActivity extends AppCompatActivity {
     public static int timeInterval;
     public static String URL;
 
-    public TextView responseText;
+    public static Stack<String> IDStack = new Stack<>();
+    public static Stack<String> URLStack = new Stack<>();
+    public static Stack<Elements> siteElementArrayList = new Stack<>();
+
+    public TextView QueryListText;
     public Button submitButton;
     public Button checkButton;
     public EditText URLText;
     public EditText IDText;
     public EditText TimeText;
     public ImageButton HistoryButton;
+    public ImageButton AddAnotherURLAndIDButton;
+    public ImageButton CancelQueryButton;
+
+    public boolean isCancellingQuery = false;
 
     public boolean isValidURL;
     public boolean isValidID;
@@ -72,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean isInitialID;
     public boolean isInitialTime;
     public static boolean returningToMain = false;
+    public boolean insertingFromHistoryMenu = false;
 
     public static boolean historyFileCreated = false;
 
@@ -93,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
+    MutableLiveData<Boolean> urlThreadFinished = new MutableLiveData<>();
+    MutableLiveData<Boolean> siteElementThreadFinished = new MutableLiveData<>();
     MutableLiveData<Boolean> canSubmit = new MutableLiveData<>();
     MutableLiveData<Boolean> validURL = new MutableLiveData<>();
     MutableLiveData<Boolean> validID = new MutableLiveData<>();
@@ -111,6 +125,14 @@ public class MainActivity extends AppCompatActivity {
         IDText = binding.IDInput;
         TimeText = binding.TimeIntervalInput;
         HistoryButton = binding.HistoryButton;
+        AddAnotherURLAndIDButton = binding.AddURLAndIDButton;
+        CancelQueryButton = binding.CancelQueryButton;
+        QueryListText = binding.QueryListText;
+
+        AddAnotherURLAndIDButton.setVisibility(View.INVISIBLE);
+        CancelQueryButton.setVisibility(View.INVISIBLE);
+        QueryListText.setMovementMethod(new ScrollingMovementMethod());
+        QueryListText.setVisibility(View.INVISIBLE);
         
         try {
             getHistoryFileContents();
@@ -139,8 +161,20 @@ public class MainActivity extends AppCompatActivity {
             validURL.setValue(true);
             validID.setValue(true);
             validTime.setValue(true);
-            URLText.setText(LoopActivity.URL);
-            IDText.setText(LoopActivity.ID);
+            isInitialURL = false;
+            isInitialID = false;
+            isInitialTime = false;
+            URLText.setText(URLStack.pop());
+            IDText.setText(IDStack.pop());
+            siteElementArrayList.pop();
+            if (URLStack.isEmpty()){
+                CancelQueryButton.setVisibility(View.INVISIBLE);
+            } else {
+                QueryListText.setVisibility(View.VISIBLE);
+                setQueryListText();
+                CancelQueryButton.setVisibility(View.VISIBLE);
+            }
+            AddAnotherURLAndIDButton.setVisibility(View.VISIBLE);
             String timeInt = LoopActivity.timeInterval + "";
             TimeText.setText(timeInt);
         }
@@ -174,6 +208,14 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setBackgroundDrawable(colorDrawable);
 
         // TODO: have observers to let user know they are waiting for response from JSOUP
+        urlThreadFinished.observe(this, changedValue -> {
+            // if URL thread is finished and there is still more docs to get
+        });
+
+        siteElementThreadFinished.observe(this, changedValue -> {
+            // if siteElement thread is finished and there is still more siteElements to get
+        });
+
         canSubmit.observe(this, changedValue -> {
             //Do something with the changed value
             System.out.println("canSubmit has been changed to: " + canSubmit.getValue());
@@ -189,10 +231,26 @@ public class MainActivity extends AppCompatActivity {
         validURL.observe(this, changedValue -> {
             //Do something with the changed value
             System.out.println("validURL has been changed to: " + validURL.getValue());
+            if (insertingFromHistoryMenu) {
+                insertingFromHistoryMenu = false;
+                ID = Objects.requireNonNull(binding.IDInput.getText()).toString();
+                if (siteElementThread.getState() == Thread.State.NEW) {
+                    siteElementThread.start();
+                } else {
+                    siteElementThread.run();
+                }
+            }
             if (validURL.getValue()) {
                 URL = Objects.requireNonNull(binding.URLInput.getText()).toString();
+                /*
+                Need to add valid URL, ID, and SiteElements to respective array list
+                Then we can increment InputIndex -- might not even need InputIndex.
+
+                 */
+
             } else {
-                if (!isInitialURL) {
+                AddAnotherURLAndIDButton.setVisibility(View.INVISIBLE);
+                if (!isInitialURL && !isCancellingQuery) {
                     URLText.setError("Please enter a valid URL");
                 }
             }
@@ -202,12 +260,16 @@ public class MainActivity extends AppCompatActivity {
             //Do something with the changed value
             System.out.println("validID has been changed to: " + validID.getValue());
 
-            if (validID.getValue() && validURL.getValue() && validTime.getValue()) {
+            if (validID.getValue()) {
                 ID = Objects.requireNonNull(binding.IDInput.getText()).toString();
+                AddAnotherURLAndIDButton.setVisibility(View.VISIBLE);
+            }
+
+            if (validID.getValue() && validTime.getValue()) {
                 canSubmit.setValue(true);
             } else {
                 canSubmit.setValue(false);
-                if (!validID.getValue() && !isInitialID) {
+                if (!validID.getValue() && !isInitialID && !isCancellingQuery) {
                     IDText.setError("Pleaser enter a valid ID");
                 }
             }
@@ -227,7 +289,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        responseText = binding.ResponseText;
         checkButton = binding.CheckButton;
         submitButton = binding.SubmitButton;
         checkButton.setVisibility(View.INVISIBLE);
@@ -281,7 +342,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                binding.IDInput.setText("");
+                if (!isCancellingQuery) {
+                    binding.IDInput.setText("");
+                }
+
                 if (canSubmit.getValue()) {
                     canSubmit.setValue(false);
                     validURL.setValue(false);
@@ -296,13 +360,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 didIDChange = true;
-                if (canSubmit.getValue()) {
-                    canSubmit.setValue(false);
-                    validID.setValue(false);
-                    checkButton.setVisibility(View.VISIBLE);
-                    checkButton.setEnabled(true);
+                if(!isCancellingQuery) {
+                    if (canSubmit.getValue()) {
+                        canSubmit.setValue(false);
+                        validID.setValue(false);
+                        checkButton.setVisibility(View.VISIBLE);
+                        checkButton.setEnabled(true);
+                    }
                 }
-
             }
 
             @Override
@@ -325,9 +390,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.SubmitButton.setOnClickListener(v -> {
-            LoopActivity.OGSiteElement = siteElement;
+            URLStack.push(updateURL(URL));
+            IDStack.push(ID);
             try {
-                setDataInHistoryFile(updateURL(URL), ID);
+                for (int index = 0; index < URLStack.size(); index++) {
+                    setDataInHistoryFile(updateURL(URLStack.get(index)), IDStack.get(index));
+                }
+
             } catch (JSONException | FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -364,25 +433,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                     try {
                         JSONObject chosenObj = (JSONObject) contents.get(i);
-                        validURL.setValue(true);
-                        validID.setValue(true);
+                        isCancellingQuery = true;
+                        isInitialURL = true;
+                        isInitialID = true;
+
                         URLText.setText(Objects.requireNonNull(chosenObj.opt("URL")).toString());
                         IDText.setText(Objects.requireNonNull(chosenObj.opt("ID")).toString());
 
+                        isCancellingQuery = false;
+
                         URL = Objects.requireNonNull(binding.URLInput.getText()).toString();
+                        insertingFromHistoryMenu = true;
                         if (URLThread.getState() == Thread.State.NEW) {
                             URLThread.start();
                         } else {
                             URLThread.run();
                         }
-
-                        ID = Objects.requireNonNull(binding.IDInput.getText()).toString();
-                        if (siteElementThread.getState() == Thread.State.NEW) {
-                            siteElementThread.start();
-                        } else {
-                            siteElementThread.run();
-                        }
-
 
                         return true;
                     } catch (JSONException e) {
@@ -395,10 +461,63 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+
+        AddAnotherURLAndIDButton.setOnClickListener(v -> {
+            isInitialID = true;
+            isInitialURL = true;
+            CancelQueryButton.setVisibility(View.VISIBLE);
+            IDStack.push(ID);
+            URLStack.push(updateURL(URL));
+            siteElementArrayList.push(siteElement);
+            IDText.setText("");
+            URLText.setText("");
+            canSubmit.setValue(false);
+            validID.setValue(false);
+            validURL.setValue(false);
+            QueryListText.setVisibility(View.VISIBLE);
+            setQueryListText();
+
+        });
+
+        CancelQueryButton.setOnClickListener(v -> {
+            isInitialID = false;
+            isInitialURL = false;
+            isCancellingQuery = true;
+            ID = IDStack.pop();
+            IDText.setText(ID);
+            URL = URLStack.pop();
+            siteElement = siteElementArrayList.pop();
+            URLText.setText(URL);
+            isCancellingQuery = false;
+            canSubmit.setValue(true);
+            validID.setValue(true);
+            validURL.setValue(true);
+
+            if (IDStack.isEmpty()) {
+                CancelQueryButton.setVisibility(View.INVISIBLE);
+                QueryListText.setVisibility(View.INVISIBLE);
+            } else {
+                setQueryListText();
+            }
+        });
+    }
+
+    private void setQueryListText(){
+        StringBuilder QueryList = new StringBuilder("Query List\n");
+
+        for (int index = 0; index < URLStack.size(); index++) {
+            QueryList.append("\n");
+            QueryList.append("URL: ").append(URLStack.get(index)).append("\n");
+            QueryList.append("ID: ").append(IDStack.get(index)).append("\n");
+        }
+
+        QueryListText.setText(QueryList.toString());
+
     }
 
 
     public void setAlert(){
+        siteElementArrayList.push(siteElement);
         Intent intent = new Intent(this, LoopActivity.class);
         startActivity(intent);
     }
@@ -431,10 +550,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void siteElementCheck(String id) {
-        isInitialID = false;
         try{
+            isInitialID = false;
             siteElement = doc.select("#" + id);
             if (siteElement.isEmpty()) {
+                System.out.println("siteElement is empty");
                 isValidID = false;
                 canSubmit.postValue(false);
             } else {

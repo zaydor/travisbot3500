@@ -23,6 +23,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.util.Locale;
+import java.util.Stack;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -30,15 +31,21 @@ import java.util.concurrent.ScheduledFuture;
 import static java.util.concurrent.TimeUnit.*;
 
 public class LoopActivity extends AppCompatActivity {
+
+    /*
+    TODO: Need to get TextViews updated with the Stack
+     */
+
     public int notificationId = 0;
 
     public ActivityLoopBinding binding;
-    public static Document doc;
     public static Elements OGSiteElement;
     public Elements newSiteElement;
     public static int timeInterval;
     public static String URL;
     public static String ID;
+    private Stack<Document> docStack = new Stack<>();
+    private Stack<Elements> newSiteElementStack = new Stack<>();
 
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(3);
@@ -67,12 +74,8 @@ public class LoopActivity extends AppCompatActivity {
 
         timerText = binding.timerText;
 
-        doc = MainActivity.doc;
         timeInterval = MainActivity.timeInterval;
-        URL = MainActivity.updateURL(MainActivity.URL);
-        ID = MainActivity.ID;
 
-        System.out.println("Loop built");
         System.out.println(timeInterval);
 
         long duration = timeInterval * 60000;
@@ -113,7 +116,7 @@ public class LoopActivity extends AppCompatActivity {
             public void onFinish() {
                 if (maxDuration[0] < 1000) {
                     // send notification and go back to main
-                    sendNotification("La Flame Says...", "You need to restart your TravisBot3500 session!", false);
+                    sendNotification("La Flame Says...", "You need to restart your TravisBot3500 session!", false, 0);
                     goBackToMain();
                 }
 
@@ -124,7 +127,7 @@ public class LoopActivity extends AppCompatActivity {
         };
 
 
-        String response = "TravisBot3500 will check '" + URL + "' for changes on the element with ID '" + ID + "' every " + timeInterval + " minute";
+        String response = "TravisBot3500 will check '" + FormatStack(MainActivity.URLStack) + "' for changes on the element with ID '" + FormatStack(MainActivity.IDStack) + "' every " + timeInterval + " minute";
         if (timeInterval > 1) {
             response += "s!";
         } else {
@@ -138,12 +141,33 @@ public class LoopActivity extends AppCompatActivity {
 
     }
 
+    private String FormatStack(Stack<?> stack) {
+        StringBuilder formattedStackString = new StringBuilder(stack.get(0).toString());
+        int stackSize = stack.size();
+
+        if (stackSize == 1) {
+            return formattedStackString.toString();
+        }
+
+        for (int index = 1; index < stackSize; index++) {
+            formattedStackString.append(" | ").append(stack.get(index).toString());
+        }
+
+        return formattedStackString.toString();
+    }
+
     public void travisbot3500(int timeInterval) {
         final Runnable beeper = () -> {
-                newURLCheck();
+            for (int index = 0; index < MainActivity.URLStack.size(); index++) {
+                newURLCheck(index);
+            }
                 countDownTimer.start();
         };
-        final Runnable beeper2 = this::newSiteElementCheck;
+        final Runnable beeper2 = () -> {
+            for (int index = 0; index < MainActivity.URLStack.size(); index++) {
+                newSiteElementCheck(index);
+            }
+        };
         final Runnable beeper3 = this::compareNewSiteElement;
         beeperHandle =
                 scheduler.scheduleAtFixedRate(beeper, 0, timeInterval * 60, SECONDS);
@@ -169,24 +193,34 @@ public class LoopActivity extends AppCompatActivity {
     }
 
     public void compareNewSiteElement(){
-
-        System.out.println("New query: " + newSiteElement);
-        System.out.println("Old query: " + OGSiteElement);
-        try {
-            if (newSiteElement.toString().equals(OGSiteElement.toString())) {
-                System.out.println("Same site elements");
-            } else {
-                System.out.println("Different site elements");
-                sendNotification("IT'S LIT!", "Something changed at " + URL, true);
+        System.out.println("newSiteElementStack: " + newSiteElementStack.size());
+        System.out.println("OldSiteElementStack: " + MainActivity.siteElementArrayList.size());
+        for (int index = 0; index < newSiteElementStack.size(); index++) {
+            try {
+                newSiteElement = newSiteElementStack.get(index);
+                OGSiteElement = MainActivity.siteElementArrayList.get(index);
+                if (newSiteElement.toString().equals(OGSiteElement.toString())) {
+                    System.out.println("Same site elements");
+//                    System.out.println("new site: " + newSiteElement);
+//                    System.out.println("old site: " + OGSiteElement);
+                } else {
+                    System.out.println("Different site elements");
+                    System.out.println("new site: " + newSiteElement);
+                    System.out.println("old site: " + OGSiteElement);
+                    sendNotification("IT'S LIT!", "Something changed at " + MainActivity.URLStack.get(index), true, index);
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                sendNotification("ERROR", "Oops, something went wrong :(", false, 0);
             }
-        } catch (Exception e) {
-            System.out.println(e);
-            sendNotification("ERROR", "Oops, something went wrong :(", false);
         }
+
+        newSiteElementStack.clear();
+        docStack.clear();
     }
 
 
-    public void sendNotification(String title, String text, boolean changeDetected){
+    public void sendNotification(String title, String text, boolean changeDetected, int index){
         // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(this, MemoBroadcast.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -202,7 +236,7 @@ public class LoopActivity extends AppCompatActivity {
                 .setAutoCancel(true);
 
         if (changeDetected) {
-            Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URL));
+            Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.URLStack.get(index)));
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
             builder.addAction(R.drawable.ic_timer, "Go to Website", contentIntent);
         }
@@ -231,17 +265,17 @@ public class LoopActivity extends AppCompatActivity {
         }
     }
 
-    private void newURLCheck() {
+    private void newURLCheck(int index) {
         try{
-            doc = Jsoup.connect(URL).timeout(10000).get();
+            docStack.add(index, Jsoup.connect(MainActivity.URLStack.get(index)).timeout(10000).get());
         } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
 
-    private void newSiteElementCheck() {
+    private void newSiteElementCheck(int index) {
         try{
-            newSiteElement = doc.select("#" + ID);
+            newSiteElementStack.add(index, docStack.get(index).select("#" + MainActivity.IDStack.get(index)));
         } catch (Exception e) {
             System.out.println(e.toString());
         }
