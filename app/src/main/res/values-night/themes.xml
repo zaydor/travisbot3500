@@ -2,11 +2,11 @@
     <!-- Base application theme. -->
     <style name="Theme.TravisBot3500" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#e84a5f</item>
+        <item name="colorPrimary">#b1ff91</item>
         <item name="colorPrimaryVariant">#e84a5f</item>
         <item name="colorOnPrimary">#fecea8</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#fecea8</item>
+        <item name="colorSecondary">@color/colorTransparent</item>
         <item name="colorSecondaryVariant">#fecea8</item>
         <item name="colorOnSecondary">#2a363b</item>
         <!-- Status bar color. -->

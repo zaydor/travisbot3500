@@ -1,24 +1,30 @@
 package com.zaydorstudios.travisbot3500;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.MutableLiveData;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
     public ImageButton HistoryButton;
     public ImageButton AddAnotherURLAndIDButton;
     public ImageButton CancelQueryButton;
+    public ImageView Rectangle;
+    public ImageView Blob;
+    public TextView TitleText;
 
     public boolean isCancellingQuery = false;
 
@@ -121,19 +130,49 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+// Remember that you should never show the action bar if the
+// status bar is hidden, so hide that too if necessary.
+
+        boolean isDarkThemeOn = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)  == Configuration.UI_MODE_NIGHT_YES;
+
+
         URLText = binding.URLInput;
         IDText = binding.IDInput;
         TimeText = binding.TimeIntervalInput;
         HistoryButton = binding.HistoryButton;
-        AddAnotherURLAndIDButton = binding.AddURLAndIDButton;
+        AddAnotherURLAndIDButton = binding.AddAnotherURLAndIDButton;
         CancelQueryButton = binding.CancelQueryButton;
-        QueryListText = binding.QueryListText;
+        QueryListText = binding.QueryList;
+        Rectangle = binding.Rectangle;
+        TitleText = binding.TitleText;
+        Blob = binding.Blob;
 
         AddAnotherURLAndIDButton.setVisibility(View.INVISIBLE);
         CancelQueryButton.setVisibility(View.INVISIBLE);
         QueryListText.setMovementMethod(new ScrollingMovementMethod());
         QueryListText.setVisibility(View.INVISIBLE);
-        
+
+        if (isDarkThemeOn) {
+            System.out.println("night mode is on");
+            Rectangle.setImageResource(R.drawable.ic_rectangle_updated_darkmode);
+            TitleText.setTextColor(getResources().getColor(R.color.pastel_green, null));
+            HistoryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
+            AddAnotherURLAndIDButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
+            CancelQueryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
+        } else {
+            System.out.println("night mode is off");
+            Rectangle.setImageResource(R.drawable.ic_rectangle_updated);
+            Blob.setImageResource(R.drawable.ic_blob_updated_lightmode);
+            TitleText.setTextColor(getResources().getColor(R.color.pastel_blue, null));
+            HistoryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
+            AddAnotherURLAndIDButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
+            CancelQueryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
+        }
+
         try {
             getHistoryFileContents();
             historyFileCreated = true;
@@ -178,34 +217,6 @@ public class MainActivity extends AppCompatActivity {
             String timeInt = LoopActivity.timeInterval + "";
             TimeText.setText(timeInt);
         }
-
-        ActionBar actionBar;
-        actionBar = getSupportActionBar();
-
-        // Define ColorDrawable object and parse color
-        // using parseColor method
-        // with color hash code as its parameter
-
-        ColorDrawable colorDrawable;
-        int nightModeFlags =
-                getApplicationContext().getResources().getConfiguration().uiMode &
-                        Configuration.UI_MODE_NIGHT_MASK;
-        switch (nightModeFlags) {
-            case Configuration.UI_MODE_NIGHT_NO:
-                // Night mode is not active, we're using the light theme
-                colorDrawable = new ColorDrawable(Color.parseColor("#08d9d6"));
-                break;
-            case Configuration.UI_MODE_NIGHT_YES:
-                // Night mode is active, we're using dark theme
-                colorDrawable = new ColorDrawable(Color.parseColor("#e84a5f"));
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + nightModeFlags);
-        }
-
-        // Set BackgroundDrawable
-        assert actionBar != null;
-        actionBar.setBackgroundDrawable(colorDrawable);
 
         // TODO: have observers to let user know they are waiting for response from JSOUP
         urlThreadFinished.observe(this, changedValue -> {
@@ -289,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        checkButton = binding.CheckButton;
+        checkButton = binding.CheckIDButton;
         submitButton = binding.SubmitButton;
         checkButton.setVisibility(View.INVISIBLE);
 
@@ -520,6 +531,8 @@ public class MainActivity extends AppCompatActivity {
         siteElementArrayList.push(siteElement);
         Intent intent = new Intent(this, LoopActivity.class);
         startActivity(intent);
+
+        overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
     }
 
     public static String updateURL(String url) {

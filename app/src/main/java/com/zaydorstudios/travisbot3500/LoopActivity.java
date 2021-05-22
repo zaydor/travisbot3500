@@ -4,24 +4,35 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Configuration;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.zaydorstudios.travisbot3500.databinding.ActivityLoopBinding;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 import java.util.concurrent.Executors;
@@ -53,6 +64,14 @@ public class LoopActivity extends AppCompatActivity {
     private ScheduledFuture<?> beeperHandle2;
     private ScheduledFuture<?> beeperHandle3;
 
+    private ProgressBar progressBar;
+    public boolean isDarkThemeOn;
+    private RecyclerView recyclerView;
+    private ImageView eyeImage;
+    private TextView endText;
+    private ImageView bottomRectangle;
+    private TextView titleText2;
+
     TextView timerText;
     CountDownTimer countDownTimer;
     TextView sessionEndText;
@@ -66,19 +85,50 @@ public class LoopActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+
         createNotificationChannel();
 
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+// Remember that you should never show the action bar if the
+// status bar is hidden, so hide that too if necessary.
+
+        isDarkThemeOn = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)  == Configuration.UI_MODE_NIGHT_YES;
+
+        AnimationDrawable animationDrawable = (AnimationDrawable) binding.constraintLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(10);
+        animationDrawable.setExitFadeDuration(5000);
+        animationDrawable.start();
+
         AlertDialog dialog = buildAlertDialog();
+        initRecyclerView();
 
         sessionEndText = binding.travisBotEndText;
-
         timerText = binding.timerText;
+        progressBar = binding.progressBar;
+        recyclerView = binding.RecyclerView;
+        eyeImage = binding.EyeImage;
+        endText = binding.travisBotEndText;
+        bottomRectangle = binding.BottomRectangle;
+        titleText2 = binding.TitleText2;
+
+        if (isDarkThemeOn) {
+            bottomRectangle.setImageResource(R.drawable.ic_rectangle_updated_darkmode);
+        } else {
+            bottomRectangle.setImageResource(R.drawable.ic_rectangle_updated);
+        }
+
+
+
+
+        updateProgressBar(99,100);
 
         timeInterval = MainActivity.timeInterval;
 
-        System.out.println(timeInterval);
-
         long duration = timeInterval * 60000;
+        long totalSeconds = timeInterval * 60;
         final long[] maxDuration = {24 * 60 * 60000};
 
         countDownTimer = new CountDownTimer(duration, 1000) {
@@ -86,6 +136,8 @@ public class LoopActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 long secondsRemain = (millisUntilFinished / 1000) % 60 ;
                 long minutesRemain = ((millisUntilFinished / (1000*60)) % 60);
+                float secRemain = (float) (millisUntilFinished / 1000.0);
+                updateProgressBar(secRemain, totalSeconds);
 
                 if (maxDuration[0] > 0) {
                     maxDuration[0] -= 1000;
@@ -105,7 +157,7 @@ public class LoopActivity extends AppCompatActivity {
 
                 String timeRemain = min + ":" + sec;
 
-                String fullText = "This TravisBot3500 session will end in: " + maxHour + ":" + maxMin + ":" + maxSec;
+                String fullText = "This Web Watch session will end in: " + maxHour + ":" + maxMin + ":" + maxSec;
 
                 sessionEndText.setText(fullText);
                 timerText.setText(timeRemain);
@@ -116,7 +168,7 @@ public class LoopActivity extends AppCompatActivity {
             public void onFinish() {
                 if (maxDuration[0] < 1000) {
                     // send notification and go back to main
-                    sendNotification("La Flame Says...", "You need to restart your TravisBot3500 session!", false, 0);
+                    sendNotification("Web Watch Session is Over", "You need to restart your Web Watch session!", false, 0);
                     goBackToMain();
                 }
 
@@ -126,34 +178,13 @@ public class LoopActivity extends AppCompatActivity {
 
         };
 
-
-        String response = "TravisBot3500 will check '" + FormatStack(MainActivity.URLStack) + "' for changes on the element with ID '" + FormatStack(MainActivity.IDStack) + "' every " + timeInterval + " minute";
-        if (timeInterval > 1) {
-            response += "s!";
-        } else {
-            response += "!";
-        }
-        binding.ActivityText.setText(response);
+        String title = "Watching...";
+        binding.TitleText2.setText(title);
 
         binding.BackButton.setOnClickListener(v -> dialog.show());
 
         travisbot3500(timeInterval);
 
-    }
-
-    private String FormatStack(Stack<?> stack) {
-        StringBuilder formattedStackString = new StringBuilder(stack.get(0).toString());
-        int stackSize = stack.size();
-
-        if (stackSize == 1) {
-            return formattedStackString.toString();
-        }
-
-        for (int index = 1; index < stackSize; index++) {
-            formattedStackString.append(" | ").append(stack.get(index).toString());
-        }
-
-        return formattedStackString.toString();
     }
 
     public void travisbot3500(int timeInterval) {
@@ -186,28 +217,22 @@ public class LoopActivity extends AppCompatActivity {
 
         builder.setNegativeButton("Nevermind", (dialog, id) -> dialog.dismiss());
 
-        builder.setMessage("This will end the current TravisBot3500 session.")
+        builder.setMessage("This will end the current Web Watch session.")
                 .setTitle("Are you sure?");
 
         return builder.create();
     }
 
-    public void compareNewSiteElement(){
-        System.out.println("newSiteElementStack: " + newSiteElementStack.size());
-        System.out.println("OldSiteElementStack: " + MainActivity.siteElementArrayList.size());
+    public void compareNewSiteElement(){ ;
         for (int index = 0; index < newSiteElementStack.size(); index++) {
             try {
                 newSiteElement = newSiteElementStack.get(index);
                 OGSiteElement = MainActivity.siteElementArrayList.get(index);
                 if (newSiteElement.toString().equals(OGSiteElement.toString())) {
                     System.out.println("Same site elements");
-//                    System.out.println("new site: " + newSiteElement);
-//                    System.out.println("old site: " + OGSiteElement);
                 } else {
                     System.out.println("Different site elements");
-                    System.out.println("new site: " + newSiteElement);
-                    System.out.println("old site: " + OGSiteElement);
-                    sendNotification("IT'S LIT!", "Something changed at " + MainActivity.URLStack.get(index), true, index);
+                    sendNotification("WEB WATCH ALERT!", "Something changed at " + MainActivity.URLStack.get(index), true, index);
                 }
             } catch (Exception e) {
                 System.out.println(e);
@@ -226,7 +251,7 @@ public class LoopActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "TRAVISBOT3500 CHANNEL")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "WEB WATCH CHANNEL")
                 .setSmallIcon(R.mipmap.ic_travisbot)
                 .setContentTitle(title)
                 .setContentText(text)
@@ -253,10 +278,10 @@ public class LoopActivity extends AppCompatActivity {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "TRAVISBOT3500 CHANNEL";
-            String description = "TRAVISBOT3500 CHANNEL FOR NOTIFS";
+            CharSequence name = "WEB WATCH CHANNEL";
+            String description = "WEB WATCH CHANNEL FOR NOTIFS";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("TRAVISBOT3500 CHANNEL", name, importance);
+            NotificationChannel channel = new NotificationChannel("WEB WATCH CHANNEL", name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
@@ -290,5 +315,21 @@ public class LoopActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+    }
+
+    private void updateProgressBar(float secondsRemaining, float totalSeconds) {
+        float progress = 100 * (secondsRemaining / totalSeconds);
+        progressBar.setProgress((int) progress, true);
+    }
+
+    private void initRecyclerView(){
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView recyclerView = findViewById(R.id.RecyclerView);
+        recyclerView.setLayoutManager(layoutManager);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, MainActivity.URLStack, MainActivity.IDStack, isDarkThemeOn);
+        recyclerView.setAdapter(adapter);
+
     }
 }
