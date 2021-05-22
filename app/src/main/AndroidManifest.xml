@@ -10,12 +10,15 @@
         android:roundIcon="@mipmap/ic_travisbot_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TravisBot3500">
-        <activity android:name="com.zaydorstudios.travisbot3500.MainActivity">
+        <activity android:name="com.zaydorstudios.travisbot3500.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name="com.zaydorstudios.travisbot3500.MainActivity">
+
         </activity>
         <activity android:name="com.zaydorstudios.travisbot3500.LoopActivity">
 
