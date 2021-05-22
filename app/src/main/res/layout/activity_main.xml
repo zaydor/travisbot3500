@@ -6,149 +6,176 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/Blob"
+        android:layout_width="834dp"
+        android:layout_height="544dp"
+        android:layout_marginEnd="36dp"
+        android:adjustViewBounds="true"
+        android:rotation="-23"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.551"
+        app:srcCompat="@drawable/ic_blob_updated"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/Rectangle"
+        android:layout_width="635dp"
+        android:layout_height="418dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_rectangle_updated" />
+
     <TextView
         android:id="@+id/TitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TravisBot3500"
-        android:textSize="35sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.067" />
+        android:layout_marginTop="48dp"
+        android:text="@string/web_watch"
+        android:textColor="@color/icon_gray"
+        android:textSize="56sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/Rectangle"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/URLBox"
-        android:layout_width="386dp"
-        android:layout_height="61dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="96dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TitleText">
+        android:id="@+id/URLInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="96dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:layout_constraintEnd_toEndOf="@+id/Rectangle"
+        app:layout_constraintStart_toStartOf="@+id/Rectangle"
+        app:layout_constraintTop_toTopOf="@+id/Rectangle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/URLInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="URL"
-            android:singleLine="true" />
+            android:hint="@string/url"
+            android:singleLine="true"
+            android:textSize="24sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/IDBox"
-        android:layout_width="386dp"
-        android:layout_height="61dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/URLBox">
+        android:id="@+id/IDInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="@+id/URLInputLayout"
+        app:layout_constraintStart_toStartOf="@+id/URLInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/URLInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/IDInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="ID"
-            android:singleLine="true" />
+            android:hint="@string/id"
+            android:singleLine="true"
+            android:textSize="24sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/TimeIntervalInput"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TimeIntervalInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:ems="10"
-        android:inputType="number"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/IDBox" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/Rectangle"
+        app:layout_constraintStart_toStartOf="@+id/Rectangle"
+        app:layout_constraintTop_toBottomOf="@+id/IDInputLayout">
 
-    <TextView
-        android:id="@+id/TimeIntervalText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time Interval (Minutes)"
-        app:layout_constraintBottom_toTopOf="@+id/TimeIntervalInput"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/TimeIntervalInput"
+            android:layout_width="290sp"
+            android:layout_height="wrap_content"
+            android:hint="@string/time_interval_minutes"
+            android:inputType="number"
+            android:textSize="24sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/SubmitButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="127dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/submit"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/SubmitButton"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:background="#44F84B"
-        android:backgroundTint="#B53838"
-        android:text="Submit"
-        app:iconTint="@color/teal_200"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:rippleColor="@color/white" />
-
-    <Button
-        android:id="@+id/CheckButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="Check ID"
+        android:id="@+id/CheckIDButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="127dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/check_id"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/SubmitButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/HistoryButton"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="?android:attr/colorBackground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_history" />
-
-    <ImageButton
-        android:id="@+id/AddURLAndIDButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="100dp"
-        android:background="#00FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/IDBox"
+        android:layout_marginEnd="16dp"
+        android:background="#00000000"
+        app:layout_constraintBottom_toBottomOf="@+id/TitleText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/URLBox"
-        app:layout_constraintVertical_bias="0.527"
+        app:layout_constraintTop_toTopOf="@+id/TitleText"
+        app:srcCompat="@drawable/ic_history"
+        app:tint="@color/icon_gray" />
+
+    <ImageButton
+        android:id="@+id/AddAnotherURLAndIDButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/IDInputLayout"
+        app:layout_constraintEnd_toEndOf="@+id/Rectangle"
+        app:layout_constraintStart_toEndOf="@+id/URLInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/URLInputLayout"
         app:srcCompat="@drawable/ic_add" />
 
     <ImageButton
         android:id="@+id/CancelQueryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:background="#00FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/IDBox"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/URLBox"
+        app:layout_constraintBottom_toTopOf="@+id/IDInputLayout"
+        app:layout_constraintEnd_toStartOf="@+id/URLInputLayout"
+        app:layout_constraintStart_toStartOf="@+id/Rectangle"
+        app:layout_constraintTop_toBottomOf="@+id/URLInputLayout"
         app:srcCompat="@drawable/ic_cancel" />
 
     <TextView
-        android:id="@+id/QueryListText"
-        android:layout_width="312dp"
-        android:layout_height="183dp"
-        android:layout_marginTop="116dp"
+        android:id="@+id/QueryList"
+        android:layout_width="463dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:isScrollContainer="true"
+        android:scrollbarStyle="insideOverlay"
         android:scrollbars="vertical"
-        android:text="Query List"
-        android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TimeIntervalInput" />
+        app:layout_constraintBottom_toBottomOf="@+id/Rectangle"
+        app:layout_constraintEnd_toEndOf="@+id/Rectangle"
+        app:layout_constraintStart_toStartOf="@+id/Rectangle"
+        app:layout_constraintTop_toBottomOf="@+id/TimeIntervalInputLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
