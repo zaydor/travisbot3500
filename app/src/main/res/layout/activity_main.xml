@@ -133,8 +133,9 @@
         android:layout_marginEnd="16dp"
         android:background="#00000000"
         app:layout_constraintBottom_toBottomOf="@+id/TitleText"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/MenuButton"
         app:layout_constraintTop_toTopOf="@+id/TitleText"
+        app:layout_constraintVertical_bias="0.518"
         app:srcCompat="@drawable/ic_history"
         app:tint="@color/icon_gray" />
 
@@ -177,5 +178,16 @@
         app:layout_constraintEnd_toEndOf="@+id/Rectangle"
         app:layout_constraintStart_toStartOf="@+id/Rectangle"
         app:layout_constraintTop_toBottomOf="@+id/TimeIntervalInputLayout" />
+
+    <ImageButton
+        android:id="@+id/MenuButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="#00ECDEDE"
+        app:layout_constraintBottom_toBottomOf="@+id/TitleText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/TitleText"
+        app:srcCompat="@drawable/ic_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
