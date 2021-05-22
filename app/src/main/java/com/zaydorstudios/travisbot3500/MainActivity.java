@@ -1,5 +1,6 @@
 package com.zaydorstudios.travisbot3500;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.MutableLiveData;
@@ -7,6 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -18,6 +21,7 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     public ImageView Rectangle;
     public ImageView Blob;
     public TextView TitleText;
+    public ImageButton MenuButton;
 
     public boolean isCancellingQuery = false;
 
@@ -150,6 +155,9 @@ public class MainActivity extends AppCompatActivity {
         Rectangle = binding.Rectangle;
         TitleText = binding.TitleText;
         Blob = binding.Blob;
+        MenuButton = binding.MenuButton;
+
+        AlertDialog dialog = buildAlertDialog();
 
         AddAnotherURLAndIDButton.setVisibility(View.INVISIBLE);
         CancelQueryButton.setVisibility(View.INVISIBLE);
@@ -161,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
             Rectangle.setImageResource(R.drawable.ic_rectangle_updated_darkmode);
             TitleText.setTextColor(getResources().getColor(R.color.pastel_green, null));
             HistoryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
+            MenuButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
             AddAnotherURLAndIDButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
             CancelQueryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
         } else {
@@ -169,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
             Blob.setImageResource(R.drawable.ic_blob_updated_lightmode);
             TitleText.setTextColor(getResources().getColor(R.color.pastel_blue, null));
             HistoryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
+            MenuButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
             AddAnotherURLAndIDButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
             CancelQueryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
         }
@@ -395,6 +405,7 @@ public class MainActivity extends AppCompatActivity {
                         siteElementThread.start();
                     } else {
                         siteElementThread.run();
+
                     }
                 }
             }
@@ -421,6 +432,26 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 siteElementThread.run();
             }
+        });
+
+        MenuButton.setOnClickListener(v -> {
+            PopupMenu menu = new PopupMenu(MainActivity.this, v);
+            menu.getMenu().add(0, 0, 0, "Tutorial");
+            menu.getMenu().add(0, 1, 1, "App Info");
+            menu.show();
+
+            menu.setOnMenuItemClickListener(item -> {
+                int i = item.getItemId();
+                if (i == 0) {
+                    // open tutorial activity
+                } else if (i == 1) {
+                    // open app info dialog
+                    dialog.show();
+                } else {
+                    // show premium features page
+                }
+                return true;
+            });
         });
 
         HistoryButton.setOnClickListener(v -> {
@@ -511,6 +542,27 @@ public class MainActivity extends AppCompatActivity {
                 setQueryListText();
             }
         });
+    }
+
+    private AlertDialog buildAlertDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        builder.setPositiveButton("Back", (dialog, id) -> dialog.dismiss());
+
+        PackageManager pm = getApplicationContext().getPackageManager();
+        String pkgName = getApplicationContext().getPackageName();
+        PackageInfo pkgInfo = null;
+        try {
+            pkgInfo = pm.getPackageInfo(pkgName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String ver = pkgInfo.versionName;
+
+        builder.setMessage("Web Watch was created by Isaiah Dorado.\nComments, questions, concerns? Email me: isaiahdorado@gmail.com")
+                .setTitle("Web Watch Version: " + ver);
+
+        return builder.create();
     }
 
     private void setQueryListText(){
