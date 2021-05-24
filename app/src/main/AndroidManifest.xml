@@ -5,9 +5,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_travisbot"
+        android:icon="@mipmap/ic_webwatch"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_travisbot_round"
+        android:roundIcon="@mipmap/ic_webwatch"
         android:supportsRtl="true"
         android:theme="@style/Theme.TravisBot3500">
         <activity android:name="com.zaydorstudios.travisbot3500.SplashActivity">

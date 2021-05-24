@@ -19,7 +19,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.551"
         app:srcCompat="@drawable/ic_blob_updated"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        android:contentDescription="@string/image_of_a_blob" />
 
     <ImageView
         android:id="@+id/Rectangle"
@@ -29,7 +30,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_rectangle_updated" />
+        app:srcCompat="@drawable/ic_rectangle_updated"
+        android:contentDescription="@string/background_rectangle" />
 
     <TextView
         android:id="@+id/TitleText"
@@ -137,7 +139,8 @@
         app:layout_constraintTop_toTopOf="@+id/TitleText"
         app:layout_constraintVertical_bias="0.518"
         app:srcCompat="@drawable/ic_history"
-        app:tint="@color/icon_gray" />
+        app:tint="@color/icon_gray"
+        android:contentDescription="@string/history_button" />
 
     <ImageButton
         android:id="@+id/AddAnotherURLAndIDButton"
@@ -150,7 +153,8 @@
         app:layout_constraintEnd_toEndOf="@+id/Rectangle"
         app:layout_constraintStart_toEndOf="@+id/URLInputLayout"
         app:layout_constraintTop_toBottomOf="@+id/URLInputLayout"
-        app:srcCompat="@drawable/ic_add" />
+        app:srcCompat="@drawable/ic_add"
+        android:contentDescription="@string/plus_button_adds_another_query" />
 
     <ImageButton
         android:id="@+id/CancelQueryButton"
@@ -163,7 +167,8 @@
         app:layout_constraintEnd_toStartOf="@+id/URLInputLayout"
         app:layout_constraintStart_toStartOf="@+id/Rectangle"
         app:layout_constraintTop_toBottomOf="@+id/URLInputLayout"
-        app:srcCompat="@drawable/ic_cancel" />
+        app:srcCompat="@drawable/ic_cancel"
+        android:contentDescription="@string/minus_button_deletes_current_query" />
 
     <TextView
         android:id="@+id/QueryList"
@@ -188,6 +193,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/TitleText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/TitleText"
-        app:srcCompat="@drawable/ic_menu" />
+        app:srcCompat="@drawable/ic_menu"
+        android:contentDescription="@string/menu_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
