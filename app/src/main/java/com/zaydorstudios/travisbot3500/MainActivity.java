@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         MenuButton = binding.MenuButton;
 
         AlertDialog dialog = buildAlertDialog();
+        AlertDialog tutorialDialog = buildTutorialDialog();
 
         AddAnotherURLAndIDButton.setVisibility(View.INVISIBLE);
         CancelQueryButton.setVisibility(View.INVISIBLE);
@@ -444,6 +445,7 @@ public class MainActivity extends AppCompatActivity {
                 int i = item.getItemId();
                 if (i == 0) {
                     // open tutorial activity
+                    tutorialDialog.show();
                 } else if (i == 1) {
                     // open app info dialog
                     dialog.show();
@@ -542,6 +544,24 @@ public class MainActivity extends AppCompatActivity {
                 setQueryListText();
             }
         });
+    }
+
+    private void goToTutorial() {
+        Intent intent = new Intent(this, TutorialActivity.class);
+        startActivity(intent);
+
+        overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+    }
+
+    private AlertDialog buildTutorialDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+        builder.setPositiveButton("Yes", (dialog, id) -> goToTutorial());
+        builder.setNegativeButton("No", (dialog, id) -> dialog.dismiss());
+
+        builder.setMessage("Would you like to view the tutorial again?").setTitle("Opening the Tutorial...");
+
+        return builder.create();
     }
 
     private AlertDialog buildAlertDialog(){
