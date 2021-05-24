@@ -20,6 +20,9 @@
         <activity android:name="com.zaydorstudios.travisbot3500.MainActivity">
 
         </activity>
+        <activity android:name="com.zaydorstudios.travisbot3500.TutorialActivity">
+
+        </activity>
         <activity android:name="com.zaydorstudios.travisbot3500.LoopActivity">
 
         </activity>

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -61,10 +60,11 @@ public class SplashActivity extends AppCompatActivity {
             File file = new File(getApplicationContext().getFilesDir(),"init");
             if(file.exists()) {
                 // tutorial has been used before
-
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             } else{
                 // first time using the app
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, TutorialActivity.class);
                 startActivity(intent);
             }
 
