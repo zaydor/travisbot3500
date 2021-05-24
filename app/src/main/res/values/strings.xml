@@ -1,9 +1,30 @@
 <resources>
-    <string name="app_name">TravisBot3500</string>
+    <string name="app_name">Web Watch</string>
     <string name="check_id">Check ID</string>
     <string name="submit">Submit</string>
     <string name="time_interval_minutes">Time Interval (Minutes)</string>
     <string name="id">ID</string>
     <string name="url">URL</string>
     <string name="web_watch">Web Watch</string>
+    <string name="let_us_keep_an_eye_on_it">Let us keep an eye on it</string>
+    <string name="eye">Eye</string>
+    <string name="image_of_a_blob">Image of a blob</string>
+    <string name="history_button">History Button</string>
+    <string name="plus_button_adds_another_query">Plus Button, adds another query</string>
+    <string name="minus_button_deletes_current_query">Minus Button, deletes current query</string>
+    <string name="menu_button">Menu Button</string>
+    <string name="left_button">Left Button</string>
+    <string name="right_button">Right Button</string>
+    <string name="close_tutorial_button">Close Tutorial Button</string>
+    <string name="shows_an_image_of_the_tutorial">Shows an image of the tutorial</string>
+    <string name="background_rectangle">Background Rectangle</string>
+    <string name="url_test_com">URL: test.com</string>
+    <string name="id_test">ID: test</string>
+    <string name="test">test</string>
+    <string name="bottom_rectangle">Bottom Rectangle</string>
+    <string name="back">Back</string>
+    <string name="_00_00">00:00</string>
+    <string name="time_until_next_check">Time Until Next Check</string>
+    <string name="this_web_watch_session_will_end_in_00_00_00">This Web Watch session will end in: 00:00:00</string>
+    <string name="eye_icon">Eye Icon</string>
 </resources>

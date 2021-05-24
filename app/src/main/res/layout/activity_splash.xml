@@ -12,7 +12,7 @@
         android:id="@+id/WebWatchText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Web Watch"
+        android:text="@string/web_watch"
         android:textSize="64sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/LargeEyeImage"
@@ -28,13 +28,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/group2"
-        app:srcCompat="@drawable/ic_eye_large" />
+        app:srcCompat="@drawable/ic_eye_large"
+        android:contentDescription="@string/eye" />
 
     <TextView
         android:id="@+id/TagLineText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Let us keep an eye on it"
+        android:text="@string/let_us_keep_an_eye_on_it"
         android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

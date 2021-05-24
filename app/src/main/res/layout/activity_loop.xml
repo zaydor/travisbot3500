@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="32dp"
-        android:text="test"
+        android:text="@string/test"
         android:textAlignment="center"
         android:textSize="40sp"
         android:textStyle="bold"
@@ -41,14 +41,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progress_bar"
-        app:srcCompat="@drawable/ic_rectangle_updated_darkmode" />
+        app:srcCompat="@drawable/ic_rectangle_updated_darkmode"
+        android:contentDescription="@string/bottom_rectangle" />
 
     <Button
         android:id="@+id/BackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Back"
+        android:text="@string/back"
         style="?attr/materialButtonOutlinedStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +70,7 @@
         android:id="@+id/timerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00:00"
+        android:text="@string/_00_00"
         android:textSize="45sp"
         app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +82,7 @@
         android:id="@+id/timeUntilText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time Until Next Check"
+        android:text="@string/time_until_next_check"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/progress_bar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
-        android:text="This Web Watch session will end in: 00:00:00 "
+        android:text="@string/this_web_watch_session_will_end_in_00_00_00"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -107,6 +108,7 @@
         app:layout_constraintEnd_toStartOf="@+id/TitleText2"
         app:layout_constraintTop_toTopOf="@+id/TitleText2"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_eye" />
+        app:srcCompat="@drawable/ic_eye"
+        android:contentDescription="@string/eye_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

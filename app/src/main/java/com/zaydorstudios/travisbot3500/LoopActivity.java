@@ -252,7 +252,7 @@ public class LoopActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "WEB WATCH CHANNEL")
-                .setSmallIcon(R.mipmap.ic_travisbot)
+                .setSmallIcon(R.drawable.ic_webwatch_notif_icon)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
