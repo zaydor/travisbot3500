@@ -1,4 +1,4 @@
-package com.zaydorstudios.travisbot3500;
+package com.zaydorstudios.webwatch;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
-import com.zaydorstudios.travisbot3500.databinding.ActivityLoopBinding;
+import com.zaydorstudios.webwatch.databinding.ActivityLoopBinding;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -183,11 +183,11 @@ public class LoopActivity extends AppCompatActivity {
 
         binding.BackButton.setOnClickListener(v -> dialog.show());
 
-        travisbot3500(timeInterval);
+        webwatch(timeInterval);
 
     }
 
-    public void travisbot3500(int timeInterval) {
+    public void webwatch(int timeInterval) {
         final Runnable beeper = () -> {
             for (int index = 0; index < MainActivity.URLStack.size(); index++) {
                 newURLCheck(index);

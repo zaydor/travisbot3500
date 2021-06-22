@@ -1,4 +1,4 @@
-package com.zaydorstudios.travisbot3500;
+package com.zaydorstudios.webwatch;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.travisbot3500", appContext.getPackageName());
+        assertEquals("com.example.webwatch", appContext.getPackageName());
     }
 }

@@ -1,4 +1,4 @@
-package com.zaydorstudios.travisbot3500;
+package com.zaydorstudios.webwatch;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -1,21 +1,16 @@
-package com.zaydorstudios.travisbot3500;
+package com.zaydorstudios.webwatch;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.MutableLiveData;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
@@ -32,7 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zaydorstudios.travisbot3500.databinding.ActivityMainBinding;
+import com.zaydorstudios.webwatch.databinding.ActivityMainBinding;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -684,7 +679,7 @@ public class MainActivity extends AppCompatActivity {
 
         contents.put(addressMap);
 
-        String filename = "TravisBot3500 History";
+        String filename = "webwatch History";
         String fileContents = contents.toString();
 
         try (FileOutputStream fos = getApplicationContext().openFileOutput(filename, Context.MODE_PRIVATE)) {
@@ -699,7 +694,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getHistoryFileContents() throws FileNotFoundException {
         String fileContents;
-        FileInputStream fis = getApplicationContext().openFileInput("TravisBot3500 History");
+        FileInputStream fis = getApplicationContext().openFileInput("webwatch History");
         InputStreamReader inputStreamReader =
                 new InputStreamReader(fis, StandardCharsets.UTF_8);
         StringBuilder stringBuilder = new StringBuilder();
@@ -721,14 +716,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteHistoryFile() {
         URI uri = getApplication().getFilesDir().toURI();
-        File fdelete = new File(uri.getPath().concat("TravisBot3500 History"));
+        File fdelete = new File(uri.getPath().concat("webwatch History"));
         if (fdelete.exists()) {
             if (fdelete.delete()) {
-                System.out.println("file Deleted :" + uri.getPath().concat("TravisBot3500 History"));
+                System.out.println("file Deleted :" + uri.getPath().concat("webwatch History"));
                 HistoryButton.setVisibility(View.INVISIBLE);
                 historyFileCreated = false;
             } else {
-                System.out.println("file not Deleted :" + uri.getPath().concat("TravisBot3500 History"));
+                System.out.println("file not Deleted :" + uri.getPath().concat("webwatch History"));
             }
         }
     }

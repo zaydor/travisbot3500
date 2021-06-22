@@ -1,4 +1,4 @@
-package com.zaydorstudios.travisbot3500;
+package com.zaydorstudios.webwatch;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.zaydorstudios.travisbot3500.databinding.ActivityTutorialBinding;
+import com.zaydorstudios.webwatch.databinding.ActivityTutorialBinding;
 
 import java.io.File;
 import java.io.FileNotFoundException;

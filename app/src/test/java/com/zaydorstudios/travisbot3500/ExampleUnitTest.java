@@ -1,4 +1,4 @@
-package com.zaydorstudios.travisbot3500;
+package com.zaydorstudios.webwatch;
 
 import org.junit.Test;
 

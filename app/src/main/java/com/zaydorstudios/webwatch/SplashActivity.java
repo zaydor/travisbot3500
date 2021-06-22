@@ -1,4 +1,4 @@
-package com.zaydorstudios.travisbot3500;
+package com.zaydorstudios.webwatch;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.zaydorstudios.travisbot3500.databinding.ActivitySplashBinding;
+import com.zaydorstudios.webwatch.databinding.ActivitySplashBinding;
 
 import java.io.File;
 
