@@ -16,6 +16,7 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -307,6 +308,21 @@ public class MainActivity extends AppCompatActivity {
         submitButton = binding.SubmitButton;
         checkButton.setVisibility(View.INVISIBLE);
 
+        TimeText.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    if (canSubmit.getValue()) {
+                        submittingInfo();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
         binding.URLInput.setOnFocusChangeListener((v, hasFocus) -> {
 
             if (!hasFocus) {
@@ -405,17 +421,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.SubmitButton.setOnClickListener(v -> {
-            URLStack.push(updateURL(URL));
-            IDStack.push(ID);
-            try {
-                for (int index = 0; index < URLStack.size(); index++) {
-                    setDataInHistoryFile(updateURL(URLStack.get(index)), IDStack.get(index));
-                }
-
-            } catch (JSONException | FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            setAlert();
+            submittingInfo();
         });
 
         checkButton.setOnClickListener(v -> {
@@ -536,6 +542,20 @@ public class MainActivity extends AppCompatActivity {
                 setQueryListText();
             }
         });
+    }
+
+    private void submittingInfo() {
+        URLStack.push(updateURL(URL));
+        IDStack.push(ID);
+        try {
+            for (int index = 0; index < URLStack.size(); index++) {
+                setDataInHistoryFile(updateURL(URLStack.get(index)), IDStack.get(index));
+            }
+
+        } catch (JSONException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        setAlert();
     }
 
     private void goToTutorial() {
