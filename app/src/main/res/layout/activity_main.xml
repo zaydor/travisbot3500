@@ -12,32 +12,36 @@
         android:layout_height="544dp"
         android:layout_marginEnd="36dp"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/image_of_a_blob"
         android:rotation="-23"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.551"
-        app:srcCompat="@drawable/ic_blob_updated"
-        tools:visibility="visible"
-        android:contentDescription="@string/image_of_a_blob" />
+        app:srcCompat="@drawable/ic_blob_updated" />
 
     <ImageView
         android:id="@+id/Rectangle"
-        android:layout_width="635dp"
+        android:layout_width="0dp"
         android:layout_height="418dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="15dp"
+        android:contentDescription="@string/background_rectangle"
+        app:layout_constraintBottom_toTopOf="@+id/CheckIDButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_rectangle_updated"
-        android:contentDescription="@string/background_rectangle" />
+        app:layout_constraintTop_toBottomOf="@+id/TitleText"
+        app:srcCompat="@drawable/ic_rectangle_updated" />
 
     <TextView
         android:id="@+id/TitleText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="48dp"
+        android:autoSizeMaxTextSize="48sp"
+        android:autoSizeMinTextSize="24sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
         android:text="@string/web_watch"
         android:textColor="@color/icon_gray"
         android:textSize="56sp"
@@ -47,13 +51,14 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/URLInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="96dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="96dp"
         android:layout_marginEnd="96dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintEnd_toEndOf="@+id/Rectangle"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/Rectangle"
         app:layout_constraintTop_toTopOf="@+id/Rectangle">
 
@@ -63,7 +68,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/url"
             android:singleLine="true"
-            android:textSize="24sp" />
+            android:textSize="12sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -71,7 +76,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/URLInputLayout"
         app:layout_constraintStart_toStartOf="@+id/URLInputLayout"
         app:layout_constraintTop_toBottomOf="@+id/URLInputLayout">
@@ -82,14 +87,14 @@
             android:layout_height="wrap_content"
             android:hint="@string/id"
             android:singleLine="true"
-            android:textSize="24sp" />
+            android:textSize="12sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/TimeIntervalInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/Rectangle"
         app:layout_constraintStart_toStartOf="@+id/Rectangle"
@@ -97,11 +102,12 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/TimeIntervalInput"
-            android:layout_width="290sp"
-            android:layout_height="wrap_content"
+            android:layout_width="150sp"
+            android:layout_height="match_parent"
             android:hint="@string/time_interval_minutes"
             android:inputType="number"
-            android:textSize="24sp" />
+            android:textAlignment="center"
+            android:textSize="12sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -130,45 +136,52 @@
 
     <ImageButton
         android:id="@+id/HistoryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:background="#00000000"
+        android:contentDescription="@string/history_button"
         app:layout_constraintBottom_toBottomOf="@+id/TitleText"
         app:layout_constraintEnd_toStartOf="@+id/MenuButton"
         app:layout_constraintTop_toTopOf="@+id/TitleText"
         app:layout_constraintVertical_bias="0.518"
         app:srcCompat="@drawable/ic_history"
         app:tint="@color/icon_gray"
-        android:contentDescription="@string/history_button" />
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintWidth_percent="0.1"/>
 
     <ImageButton
         android:id="@+id/AddAnotherURLAndIDButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:background="#00FFFFFF"
+        android:contentDescription="@string/plus_button_adds_another_query"
         app:layout_constraintBottom_toTopOf="@+id/IDInputLayout"
         app:layout_constraintEnd_toEndOf="@+id/Rectangle"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintStart_toEndOf="@+id/URLInputLayout"
         app:layout_constraintTop_toBottomOf="@+id/URLInputLayout"
-        app:srcCompat="@drawable/ic_add"
-        android:contentDescription="@string/plus_button_adds_another_query" />
+        app:layout_constraintWidth_percent="0.15"
+        app:srcCompat="@drawable/ic_add" />
 
     <ImageButton
         android:id="@+id/CancelQueryButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
         android:layout_marginEnd="16dp"
         android:background="#00FFFFFF"
+        android:contentDescription="@string/minus_button_deletes_current_query"
         app:layout_constraintBottom_toTopOf="@+id/IDInputLayout"
         app:layout_constraintEnd_toStartOf="@+id/URLInputLayout"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintStart_toStartOf="@+id/Rectangle"
         app:layout_constraintTop_toBottomOf="@+id/URLInputLayout"
+        app:layout_constraintWidth_percent="0.15"
         app:srcCompat="@drawable/ic_cancel"
-        android:contentDescription="@string/minus_button_deletes_current_query" />
+        />
 
     <TextView
         android:id="@+id/QueryList"
@@ -186,14 +199,16 @@
 
     <ImageButton
         android:id="@+id/MenuButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="32dp"
         android:backgroundTint="#00ECDEDE"
+        android:contentDescription="@string/menu_button"
         app:layout_constraintBottom_toBottomOf="@+id/TitleText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/TitleText"
         app:srcCompat="@drawable/ic_menu"
-        android:contentDescription="@string/menu_button" />
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintWidth_percent="0.1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

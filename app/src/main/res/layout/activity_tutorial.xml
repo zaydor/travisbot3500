@@ -8,25 +8,25 @@
         android:id="@+id/LeftButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="128dp"
+        android:layout_marginStart="32dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="#00FFFFFF"
+        android:contentDescription="@string/left_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/group"
-        app:srcCompat="@drawable/ic_chevron_left"
-        android:contentDescription="@string/left_button" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_chevron_left" />
 
     <ImageButton
         android:id="@+id/RightButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="#00FFFFFF"
+        android:contentDescription="@string/right_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/group"
-        app:srcCompat="@drawable/ic_chevron_right"
-        android:contentDescription="@string/right_button" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_chevron_right" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
@@ -40,34 +40,44 @@
         android:id="@+id/TutTitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
         android:layout_marginTop="48dp"
+        android:autoSizeMaxTextSize="56sp"
+        android:autoSizeMinTextSize="24sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
         android:text="@string/web_watch"
-        android:textSize="56sp"
+        android:textSize="42sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/CloseTutorialButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="48dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="16dp"
         android:backgroundTint="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/TutTitleText"
+        android:contentDescription="@string/close_tutorial_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/TutTitleText"
-        app:srcCompat="@drawable/ic_close"
-        android:contentDescription="@string/close_tutorial_button" />
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.15"
+        app:srcCompat="@drawable/ic_close" />
 
     <ImageView
         android:id="@+id/TutorialImage"
-        android:layout_width="449dp"
-        android:layout_height="668dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="120dp"
+        android:contentDescription="@string/shows_an_image_of_the_tutorial"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_tutorial_page_1_darkmode"
-        android:contentDescription="@string/shows_an_image_of_the_tutorial" />
+        app:srcCompat="@drawable/ic_tutorial_page_1_darkmode" />
 </androidx.constraintlayout.widget.ConstraintLayout>
