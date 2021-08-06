@@ -5,6 +5,8 @@ This is the first mobile application that has came out of Zaydor Studios, the te
 
 This app was made in Java using Android Studio.
 
+Everything was created, designed, programmed, and debugged by Isaiah Dorado.
+
 Link to download -> https://play.google.com/store/apps/details?id=com.zaydorstudios.webwatch (The free version is still in development, you could totally just rip the app from here, but that would be immoral. But who will ever know? Not me. But I might have a slight pain in my chest from the pirate life you have chosen. No big deal.)
 
 # About
