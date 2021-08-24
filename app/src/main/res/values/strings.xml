@@ -2,7 +2,7 @@
     <string name="app_name">Web Watch</string>
     <string name="check_id">Check ID</string>
     <string name="submit">Submit</string>
-    <string name="time_interval_minutes">Interval (Min)</string>
+    <string name="time_interval_minutes">Minutes</string>
     <string name="id">ID</string>
     <string name="url">URL</string>
     <string name="web_watch">Web Watch</string>

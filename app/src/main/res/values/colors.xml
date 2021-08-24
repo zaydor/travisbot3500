@@ -15,4 +15,5 @@
     <color name="colorGradientStart">@color/pastel_green</color>
     <color name="colorGradientCenter">@color/pastel_red</color>
     <color name="colorGradientEnd">@color/pastel_blue</color>
+    <color name="rect_night_background">#242526</color>
 </resources>

@@ -3,6 +3,7 @@ package com.zaydorstudios.webwatch;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.MutableLiveData;
 
 import android.content.Context;
@@ -53,6 +54,15 @@ public class MainActivity extends AppCompatActivity {
     // TODO: Split code into functions
     // TODO: Clean up form validation
 
+    // TODO: INCLUDE IN NEXT UPDATE: ADD SESSION INPUT TIMER
+    // TODO: ADD LINK TO WEBSITE IN LOOP ACTIVITY ON CHANGE DETECTED AND
+    // TODO: BETTER WAY TO TELL SOMETHING HAS CHANGED FROM LOOP ACTIVITY
+    // TODO: BUG: PRESSING BACK BUTTON ON PHONE MESSES UP THE APP
+    // TODO: END THE TIMER WHEN CHANGE WAS FOUND (OR POP IF MULTIPLE SITES)
+    // TODO: ADD DIFFERENT WAYS TO TRACK A WEBSITE OTHER THAN ID
+    // ^^ Ready for full release
+    // After that, we can work on free version of the app
+
     public ActivityMainBinding binding;
     public static Document doc;
     public static Elements siteElement;
@@ -76,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
     public ImageButton HistoryButton;
     public ImageButton AddAnotherURLAndIDButton;
     public ImageButton CancelQueryButton;
-    public ImageView Rectangle;
     public ImageView Blob;
     public TextView TitleText;
     public ImageButton MenuButton;
+    public CardView cardView;
 
     public boolean isCancellingQuery = false;
 
@@ -145,10 +155,10 @@ public class MainActivity extends AppCompatActivity {
         AddAnotherURLAndIDButton = binding.AddAnotherURLAndIDButton;
         CancelQueryButton = binding.CancelQueryButton;
         QueryListText = binding.QueryList;
-        Rectangle = binding.Rectangle;
         TitleText = binding.TitleText;
         Blob = binding.Blob;
         MenuButton = binding.MenuButton;
+        cardView = binding.cardView;
 
         AlertDialog dialog = buildAlertDialog();
         AlertDialog tutorialDialog = buildTutorialDialog();
@@ -160,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isDarkThemeOn) {
             System.out.println("night mode is on");
-            Rectangle.setImageResource(R.drawable.ic_rectangle_updated_darkmode);
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.rect_night_background, null));
             TitleText.setTextColor(getResources().getColor(R.color.pastel_green, null));
             HistoryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
             MenuButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
@@ -168,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
             CancelQueryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_green, null)));
         } else {
             System.out.println("night mode is off");
-            Rectangle.setImageResource(R.drawable.ic_rectangle_updated);
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorTransparent, null));
             Blob.setImageResource(R.drawable.ic_blob_updated_lightmode);
             TitleText.setTextColor(getResources().getColor(R.color.pastel_blue, null));
             HistoryButton.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pastel_blue, null)));
