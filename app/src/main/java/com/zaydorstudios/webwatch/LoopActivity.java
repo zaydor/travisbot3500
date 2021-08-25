@@ -48,6 +48,7 @@ public class LoopActivity extends AppCompatActivity {
     public static Elements OGSiteElement;
     public Elements newSiteElement;
     public static int timeInterval;
+    public static int sessionLength;
     public static String URL;
     public static String ID;
     private Stack<Document> docStack = new Stack<>();
@@ -121,10 +122,11 @@ public class LoopActivity extends AppCompatActivity {
         updateProgressBar(99,100);
 
         timeInterval = MainActivity.timeInterval;
+        sessionLength = MainActivity.sessionLength;
 
-        long duration = timeInterval * 60000;
-        long totalSeconds = timeInterval * 60;
-        final long[] maxDuration = {24 * 60 * 60000};
+        long duration = timeInterval * 60000L;
+        long totalSeconds = timeInterval * 60L;
+        final long[] maxDuration = {(long) sessionLength * 60 * 60000};
 
         countDownTimer = new CountDownTimer(duration, 1000) {
             @Override
@@ -177,7 +179,7 @@ public class LoopActivity extends AppCompatActivity {
         binding.TitleText2.setText(title);
 
         binding.BackButton.setOnClickListener(v -> dialog.show());
-
+        System.out.println("time interval = " + timeInterval);
         webwatch(timeInterval);
 
     }
@@ -196,11 +198,11 @@ public class LoopActivity extends AppCompatActivity {
         };
         final Runnable beeper3 = this::compareNewSiteElement;
         beeperHandle =
-                scheduler.scheduleAtFixedRate(beeper, 0, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper, 0, timeInterval * 60L, SECONDS);
         beeperHandle2 =
-                scheduler.scheduleAtFixedRate(beeper2, 1, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper2, 1, timeInterval * 60L, SECONDS);
         beeperHandle3 =
-                scheduler.scheduleAtFixedRate(beeper3, 2, timeInterval * 60, SECONDS);
+                scheduler.scheduleAtFixedRate(beeper3, 2, timeInterval * 60L, SECONDS);
 
         scheduler.schedule(() -> { beeperHandle.cancel(true); beeperHandle2.cancel(true);  beeperHandle3.cancel(true);}, 60 * 60 * 24, SECONDS);
     }

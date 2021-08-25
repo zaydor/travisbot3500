@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     // TODO: ADD LINK TO WEBSITE IN LOOP ACTIVITY ON CHANGE DETECTED AND
     // TODO: BETTER WAY TO TELL SOMETHING HAS CHANGED FROM LOOP ACTIVITY
     // TODO: BUG: PRESSING BACK BUTTON ON PHONE MESSES UP THE APP
-    // TODO: END THE TIMER WHEN CHANGE WAS FOUND (OR POP IF MULTIPLE SITES)
+    // TODO: END THE TIMER WHEN CHANGE WAS FOUND (OR POP FROM STACK IF MULTIPLE SITES)
     // TODO: ADD DIFFERENT WAYS TO TRACK A WEBSITE OTHER THAN ID
     // ^^ Ready for full release
     // After that, we can work on free version of the app
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     public static String ID;
     public static boolean didIDChange;
 
+    public static int sessionLength;
     public static int timeInterval;
     public static String URL;
 
@@ -82,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
     public Button checkButton;
     public EditText URLText;
     public EditText IDText;
-    public EditText TimeText;
     public ImageButton HistoryButton;
     public ImageButton AddAnotherURLAndIDButton;
     public ImageButton CancelQueryButton;
@@ -90,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
     public TextView TitleText;
     public ImageButton MenuButton;
     public CardView cardView;
+    public NumberPicker sessionLengthPicker;
+    public NumberPicker timerPicker;
 
     public boolean isCancellingQuery = false;
 
@@ -150,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
 
         URLText = binding.URLInput;
         IDText = binding.IDInput;
-        TimeText = binding.TimeIntervalInput;
         HistoryButton = binding.HistoryButton;
         AddAnotherURLAndIDButton = binding.AddAnotherURLAndIDButton;
         CancelQueryButton = binding.CancelQueryButton;
@@ -159,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
         Blob = binding.Blob;
         MenuButton = binding.MenuButton;
         cardView = binding.cardView;
+        sessionLengthPicker = binding.SessionLengthNumberPicker;
+        timerPicker = binding.TimerNumberPicker;
 
         AlertDialog dialog = buildAlertDialog();
         AlertDialog tutorialDialog = buildTutorialDialog();
@@ -167,6 +171,13 @@ public class MainActivity extends AppCompatActivity {
         CancelQueryButton.setVisibility(View.INVISIBLE);
         QueryListText.setMovementMethod(new ScrollingMovementMethod());
         QueryListText.setVisibility(View.INVISIBLE);
+
+        sessionLengthPicker.setMinValue(1);
+        sessionLengthPicker.setMaxValue(100);
+        sessionLengthPicker.setValue(24);
+        timerPicker.setMinValue(1);
+        timerPicker.setMaxValue(60);
+        timerPicker.setValue(15);
 
         if (isDarkThemeOn) {
             System.out.println("night mode is on");
@@ -204,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
             isInitialURL = true;
             isInitialID = true;
             isInitialTime = true;
-
             canSubmit.setValue(false); // Initialize
             validURL.setValue(false);
             validID.setValue(false);
@@ -220,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
             URLText.setText(URLStack.pop());
             IDText.setText(IDStack.pop());
             siteElementArrayList.pop();
+            timerPicker.setValue(LoopActivity.timeInterval);
+            sessionLengthPicker.setValue(LoopActivity.sessionLength);
             if (URLStack.isEmpty()){
                 CancelQueryButton.setVisibility(View.INVISIBLE);
             } else {
@@ -228,8 +240,6 @@ public class MainActivity extends AppCompatActivity {
                 CancelQueryButton.setVisibility(View.VISIBLE);
             }
             AddAnotherURLAndIDButton.setVisibility(View.VISIBLE);
-            String timeInt = LoopActivity.timeInterval + "";
-            TimeText.setText(timeInt);
         }
 
         // TODO: have observers to let user know they are waiting for response from JSOUP
@@ -290,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                 AddAnotherURLAndIDButton.setVisibility(View.VISIBLE);
             }
 
-            if (validID.getValue() && validTime.getValue()) {
+            if (validID.getValue() && validURL.getValue()) {
                 canSubmit.setValue(true);
             } else {
                 canSubmit.setValue(false);
@@ -300,37 +310,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        validTime.observe(this, changedValue -> {
-            //Do something with the changed value
-            System.out.println("validTime has been changed to: " + validTime.getValue());
-            if (validID.getValue() && validURL.getValue() && validTime.getValue()) {
-                timeInterval = Integer.parseInt(Objects.requireNonNull(binding.TimeIntervalInput.getText().toString()));
-                canSubmit.setValue(true);
-            } else {
-                canSubmit.setValue(false);
-                if (!validTime.getValue() && !isInitialTime) {
-                    TimeText.setError("Pleaser enter a value greater than 0 and less than or equal to 60");
-                }
-            }
-        });
-
         checkButton = binding.CheckIDButton;
         submitButton = binding.SubmitButton;
         checkButton.setVisibility(View.INVISIBLE);
 
-        TimeText.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on key press
-                    if (canSubmit.getValue()) {
-                        submittingInfo();
-                    }
-                    return true;
-                }
-                return false;
-            }
+        sessionLengthPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            System.out.println(newVal);
         });
 
         binding.URLInput.setOnFocusChangeListener((v, hasFocus) -> {
@@ -346,30 +331,6 @@ public class MainActivity extends AppCompatActivity {
                         URLThread.run();
                     }
                 }
-            }
-        });
-
-        binding.TimeIntervalInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                isInitialTime = false;
-                if (s.length() > 0) {
-                    int valueOfS = Integer.parseInt(Objects.requireNonNull(s.toString()));
-                    if (valueOfS > 0 && valueOfS <= 60) {
-                        validTime.setValue(true);
-                    } else {
-                        validTime.setValue(false);
-                    }
-                } else {
-                    validTime.setValue(false);
-                }
-
             }
         });
 
@@ -623,6 +584,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void setAlert(){
         siteElementArrayList.push(siteElement);
+        timeInterval = timerPicker.getValue();
+        sessionLength = sessionLengthPicker.getValue();
+
         Intent intent = new Intent(this, LoopActivity.class);
         startActivity(intent);
 

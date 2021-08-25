@@ -152,27 +152,59 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/TimeIntervalInputLayout"
+            <NumberPicker
+                android:id="@+id/TimerNumberPicker"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="@+id/IDInputLayout"
+                app:layout_constraintTop_toBottomOf="@+id/IDInputLayout" />
+
+            <NumberPicker
+                android:id="@+id/SessionLengthNumberPicker"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="48dp"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/IDInputLayout"
-                app:layout_constraintStart_toStartOf="@+id/IDInputLayout"
-                app:layout_constraintTop_toBottomOf="@+id/IDInputLayout">
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/IDInputLayout"
+                app:layout_constraintVertical_bias="0.0">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/TimeIntervalInput"
-                    android:layout_width="150sp"
-                    android:layout_height="match_parent"
-                    android:hint="@string/time_interval_minutes"
-                    android:inputType="number"
-                    android:textAlignment="center"
-                    android:textSize="20sp" />
-            </com.google.android.material.textfield.TextInputLayout>
+            </NumberPicker>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Timer (Min)"
+                app:layout_constraintBottom_toTopOf="@+id/TimerNumberPicker"
+                app:layout_constraintEnd_toEndOf="@+id/TimerNumberPicker"
+                app:layout_constraintStart_toStartOf="@+id/TimerNumberPicker"
+                app:layout_constraintTop_toBottomOf="@+id/IDInputLayout" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Session Length (Hour)"
+                app:layout_constraintBottom_toTopOf="@+id/SessionLengthNumberPicker"
+                app:layout_constraintEnd_toEndOf="@+id/SessionLengthNumberPicker"
+                app:layout_constraintStart_toStartOf="@+id/SessionLengthNumberPicker"
+                app:layout_constraintTop_toBottomOf="@+id/IDInputLayout" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
