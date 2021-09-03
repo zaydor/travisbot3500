@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,10 +39,6 @@ import static java.util.concurrent.TimeUnit.*;
 
 public class LoopActivity extends AppCompatActivity {
 
-    /*
-    TODO: Need to get TextViews updated with the Stack
-     */
-
     public int notificationId = 0;
 
     public ActivityLoopBinding binding;
@@ -49,10 +46,9 @@ public class LoopActivity extends AppCompatActivity {
     public Elements newSiteElement;
     public static int timeInterval;
     public static int sessionLength;
-    public static String URL;
-    public static String ID;
     private Stack<Document> docStack = new Stack<>();
     private Stack<Elements> newSiteElementStack = new Stack<>();
+    private boolean[] didSiteChange;
 
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(3);
@@ -65,13 +61,14 @@ public class LoopActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ImageView eyeImage;
     private TextView endText;
-    private ImageView bottomRectangle;
     private TextView titleText2;
+    private TextView timeUntilText;
 
     TextView timerText;
     CountDownTimer countDownTimer;
     TextView sessionEndText;
 
+    RecyclerViewAdapter adapter;
 
     // TODO: add a timer on this layout page when the next check will be
     @Override
@@ -93,6 +90,8 @@ public class LoopActivity extends AppCompatActivity {
 
         isDarkThemeOn = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)  == Configuration.UI_MODE_NIGHT_YES;
 
+        didSiteChange = new boolean[MainActivity.URLStack.size()];
+
         AnimationDrawable animationDrawable = (AnimationDrawable) binding.constraintLayout.getBackground();
         animationDrawable.setEnterFadeDuration(10);
         animationDrawable.setExitFadeDuration(5000);
@@ -107,17 +106,14 @@ public class LoopActivity extends AppCompatActivity {
         recyclerView = binding.RecyclerView;
         eyeImage = binding.EyeImage;
         endText = binding.travisBotEndText;
-        bottomRectangle = binding.BottomRectangle;
         titleText2 = binding.TitleText2;
+        timeUntilText = binding.timeUntilText;
 
         if (isDarkThemeOn) {
-            bottomRectangle.setImageResource(R.drawable.ic_rectangle_updated_darkmode);
+ //           bottomRectangle.setImageResource(R.drawable.ic_rectangle_updated_darkmode);
         } else {
-            bottomRectangle.setImageResource(R.drawable.ic_rectangle_updated);
+ //           bottomRectangle.setImageResource(R.drawable.ic_rectangle_updated);
         }
-
-
-
 
         updateProgressBar(99,100);
 
@@ -220,16 +216,22 @@ public class LoopActivity extends AppCompatActivity {
         return builder.create();
     }
 
-    public void compareNewSiteElement(){ ;
+    public void compareNewSiteElement(){
+        boolean allChanged = true;
+
         for (int index = 0; index < newSiteElementStack.size(); index++) {
             try {
-                newSiteElement = newSiteElementStack.get(index);
-                OGSiteElement = MainActivity.siteElementArrayList.get(index);
-                if (newSiteElement.toString().equals(OGSiteElement.toString())) {
-                    System.out.println("Same site elements");
-                } else {
-                    System.out.println("Different site elements");
-                    sendNotification("WEB WATCH ALERT!", "Something changed at " + MainActivity.URLStack.get(index), true, index);
+                if (!didSiteChange[index]) {
+                    newSiteElement = newSiteElementStack.get(index);
+                    OGSiteElement = MainActivity.siteElementArrayList.get(index);
+                    if (newSiteElement.toString().equals(OGSiteElement.toString())) {
+                        System.out.println("Same site elements");
+                        allChanged = false;
+                    } else {
+                        System.out.println("Different site elements");
+                        sendNotification("WEB WATCH ALERT!", "Something changed at " + MainActivity.URLStack.get(index), true, index);
+                        updateSiteChangeArr(index);
+                    }
                 }
             } catch (Exception e) {
                 System.out.println(e);
@@ -239,6 +241,12 @@ public class LoopActivity extends AppCompatActivity {
 
         newSiteElementStack.clear();
         docStack.clear();
+
+        if (allChanged) {
+            // stop timer
+            stopLoop();
+
+        }
     }
 
 
@@ -303,11 +311,21 @@ public class LoopActivity extends AppCompatActivity {
         }
     }
 
-    private void goBackToMain() {
+    private void stopLoop() {
         beeperHandle.cancel(true);
         beeperHandle2.cancel(true);
         beeperHandle3.cancel(true);
         countDownTimer.cancel();
+
+        timerText.setText("00:00");
+        endText.setText("Web Watch detected changes in every site!");
+        titleText2.setText("Finished!");
+        updateProgressBar(100,100);
+    }
+
+    private void goBackToMain() {
+        stopLoop();
+
         MainActivity.returningToMain = true;
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -325,8 +343,19 @@ public class LoopActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerView = findViewById(R.id.RecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, MainActivity.URLStack, MainActivity.IDStack, isDarkThemeOn);
+        adapter = new RecyclerViewAdapter(this, MainActivity.URLStack, MainActivity.IDStack, didSiteChange, isDarkThemeOn);
         recyclerView.setAdapter(adapter);
 
+    }
+
+    private void updateSiteChangeArr(int index) {
+        didSiteChange[index] = true;
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBackPressed () {
+        // toast to say "please use back button"
+        Toast.makeText(getApplicationContext(),"Please use the 'Back' button",Toast.LENGTH_SHORT).show();
     }
 }

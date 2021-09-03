@@ -71,4 +71,9 @@ public class SplashActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_left_in, R.anim.slide_left_out);
         }, 2000);
     }
+
+    @Override
+    public void onBackPressed () {
+
+    }
 }

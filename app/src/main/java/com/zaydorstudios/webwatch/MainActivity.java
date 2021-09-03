@@ -17,7 +17,6 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,13 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: Add comments
     // TODO: Split code into functions
-    // TODO: Clean up form validation
 
-    // TODO: INCLUDE IN NEXT UPDATE: ADD SESSION INPUT TIMER
-    // TODO: ADD LINK TO WEBSITE IN LOOP ACTIVITY ON CHANGE DETECTED AND
-    // TODO: BETTER WAY TO TELL SOMETHING HAS CHANGED FROM LOOP ACTIVITY
-    // TODO: BUG: PRESSING BACK BUTTON ON PHONE MESSES UP THE APP
-    // TODO: END THE TIMER WHEN CHANGE WAS FOUND (OR POP FROM STACK IF MULTIPLE SITES)
+    // TODO: INCLUDE IN NEXT UPDATE:
     // TODO: ADD DIFFERENT WAYS TO TRACK A WEBSITE OTHER THAN ID
     // ^^ Ready for full release
     // After that, we can work on free version of the app
@@ -717,5 +711,10 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("file not Deleted :" + uri.getPath().concat("webwatch History"));
             }
         }
+    }
+
+    @Override
+    public void onBackPressed () {
+
     }
 }
