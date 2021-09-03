@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/layout/activity_loop.xml" value="0.1123931623931624" />
-        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/drawable/ic_add.xml" value="0.143359375" />
+        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/drawable/ic_baseline_check_24.xml" value="0.143359375" />
+        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/drawable/ic_baseline_cross_24.xml" value="0.1" />
+        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/layout/activity_loop.xml" value="0.264" />
+        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Users/isaia/AndroidStudioProjects/TravisBot3500/app/src/main/res/layout/list_item_view.xml" value="0.264" />
       </map>
     </option>
   </component>

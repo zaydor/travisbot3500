@@ -115,4 +115,9 @@ public class TutorialActivity extends AppCompatActivity {
             CurrTutImage.setImageResource(tutorialPages[tutIndex]);
         });
     }
+
+    @Override
+    public void onBackPressed () {
+
+    }
 }
